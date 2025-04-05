@@ -31,7 +31,6 @@ using Robust.Client.UserInterface.Controls;
 using Robust.Client.UserInterface.XAML;
 using Robust.Client.Utility;
 using Robust.Client.Player;
-using Robust.Shared;
 using Robust.Shared.Configuration;
 using Robust.Shared.Enums;
 using Robust.Shared.Map;
@@ -258,37 +257,30 @@ namespace Content.Client.Lobby.UI
 
             #region Contractors
 
-            if(_cfgManager.GetCVar(CCVars.ContractorsEnabled))
+            Background.Orphan();
+            CTabContainer.AddTab(Background, Loc.GetString("humanoid-profile-editor-background-tab"));
+
+            RefreshNationalities();
+            RefreshEmployers();
+            RefreshLifepaths();
+
+            NationalityButton.OnItemSelected += args =>
             {
-                Background.Orphan();
-                CTabContainer.AddTab(Background, Loc.GetString("humanoid-profile-editor-background-tab"));
+                NationalityButton.SelectId(args.Id);
+                SetNationality(_nationalies[args.Id].ID);
+            };
 
-                RefreshNationalities();
-                RefreshEmployers();
-                RefreshLifepaths();
-
-                NationalityButton.OnItemSelected += args =>
-                {
-                    NationalityButton.SelectId(args.Id);
-                    SetNationality(_nationalies[args.Id].ID);
-                };
-
-                EmployerButton.OnItemSelected += args =>
-                {
-                    EmployerButton.SelectId(args.Id);
-                    SetEmployer(_employers[args.Id].ID);
-                };
-
-                LifepathButton.OnItemSelected += args =>
-                {
-                    LifepathButton.SelectId(args.Id);
-                    SetLifepath(_lifepaths[args.Id].ID);
-                };
-            }
-            else
+            EmployerButton.OnItemSelected += args =>
             {
-                Background.Visible = false;
-            }
+                EmployerButton.SelectId(args.Id);
+                SetEmployer(_employers[args.Id].ID);
+            };
+
+            LifepathButton.OnItemSelected += args =>
+            {
+                LifepathButton.SelectId(args.Id);
+                SetLifepath(_lifepaths[args.Id].ID);
+            };
 
             #endregion Contractors
 
@@ -2643,10 +2635,9 @@ namespace Content.Client.Lobby.UI
                 selector.PreferenceChanged += preference =>
                 {
                     // Make sure they have enough loadout points
-                    var wasSelected = Profile?.LoadoutPreferences
-                        .FirstOrDefault(it => it.LoadoutName == selector.Loadout.ID)
-                        ?.Selected ?? false;
-                    var selected = preference.Selected && (wasSelected || CheckPoints(-selector.Loadout.Cost, true));
+                    var selected = preference.Selected
+                        ? CheckPoints(-selector.Loadout.Cost, preference.Selected)
+                        : CheckPoints(selector.Loadout.Cost, preference.Selected);
 
                     // Update Preferences
                     Profile = Profile?.WithLoadoutPreference(
@@ -2665,7 +2656,7 @@ namespace Content.Client.Lobby.UI
             bool CheckPoints(int points, bool preference)
             {
                 var temp = LoadoutPointsBar.Value + points;
-                return preference ? temp >= 0 : temp < 0;
+                return preference ? !(temp < 0) : temp < 0;
             }
         }
 
