@@ -20,6 +20,18 @@ public sealed class ParallaxOverlay : Overlay
     [Dependency] private readonly IMapManager _mapManager = default!;
     [Dependency] private readonly IParallaxManager _manager = default!;
     private readonly ParallaxSystem _parallax;
+    private Dictionary<ParallaxLayerPrepared, ShaderInstance> _preppedLayersShader = new Dictionary<ParallaxLayerPrepared, ShaderInstance>();
+
+    protected override void DisposeBehavior()
+    {
+        foreach (var shader in _preppedLayersShader)
+        {
+            _preppedLayersShader.Remove(shader.Key);
+            shader.Value.Dispose();
+        }
+        _preppedLayersShader.Clear();
+        base.DisposeBehavior();
+    }
 
     public override OverlaySpace Space => OverlaySpace.WorldSpaceBelowWorld;
 
@@ -28,6 +40,20 @@ public sealed class ParallaxOverlay : Overlay
         ZIndex = ParallaxSystem.ParallaxZIndex;
         IoCManager.InjectDependencies(this);
         _parallax = _entManager.System<ParallaxSystem>();
+    }
+
+    ShaderInstance? GetLayerShader(ParallaxLayerPrepared layer)
+    {
+        if (!string.IsNullOrEmpty(layer.Config.Shader))
+        {
+            if (!_preppedLayersShader.TryGetValue(layer, out var layerShader))
+            {
+                layerShader = _prototypeManager.Index<ShaderPrototype>(layer.Config.Shader).Instance();
+                _preppedLayersShader.Add(layer, layerShader);
+            }
+            return layerShader;
+        }
+        return null;
     }
 
     protected override bool BeforeDraw(in OverlayDrawArgs args)
@@ -54,14 +80,8 @@ public sealed class ParallaxOverlay : Overlay
 
         foreach (var layer in layers)
         {
-            ShaderInstance? shader;
-
-            if (!string.IsNullOrEmpty(layer.Config.Shader))
-                shader = _prototypeManager.Index<ShaderPrototype>(layer.Config.Shader).Instance();
-            else
-                shader = null;
-
-            worldHandle.UseShader(shader);
+            var layerShader = GetLayerShader(layer);
+            worldHandle.UseShader(layerShader);
             var tex = layer.Texture;
 
             // Size of the texture in world units.
