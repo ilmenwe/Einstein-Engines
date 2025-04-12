@@ -26,6 +26,7 @@ public sealed class TurretControllerBoundUserInterface : BoundUserInterface
 
         _window.OnAccessLevelsChangedEvent += OnAccessLevelChanged;
         _window.OnArmamentSettingChangedEvent += OnArmamentSettingChanged;
+        base.Open();
     }
 
     /// <summary>

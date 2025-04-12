@@ -8,6 +8,7 @@ public sealed class CableVisualizerSystem : VisualizerSystem<CableVisualizerComp
 {
     public override void Initialize()
     {
+        base.Initialize();
         SubscribeLocalEvent<CableVisualizerComponent, AppearanceChangeEvent>(OnAppearanceChange, after: new[] { typeof(SubFloorHideSystem) });
     }
 

@@ -1,4 +1,4 @@
-﻿using Content.Client.Lathe.UI;
+using Content.Client.Lathe.UI;
 using Content.Client.UserInterface.Controls;
 using Content.Shared.ListViewSelector;
 using JetBrains.Annotations;
@@ -23,6 +23,7 @@ public sealed class ListViewSelectorBUI(EntityUid owner, Enum uiKey) : BoundUser
         _window = FormWindow();
         _window.OnClose += Close;
         _window.OpenCentered();
+        base.Open();
     }
 
     protected override void UpdateState(BoundUserInterfaceState state)

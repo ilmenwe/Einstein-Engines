@@ -1,4 +1,4 @@
-﻿using System.Numerics;
+using System.Numerics;
 using Content.Client.UserInterface.Controls;
 using Content.Shared.WhiteDream.BloodCult.Runes;
 using JetBrains.Annotations;
@@ -40,6 +40,7 @@ public sealed class RuneDrawerBUI : BoundUserInterface
     {
         _menu.OnClose += Close;
         _menu.OpenCenteredAt(_inputManager.MouseScreenPosition.Position / _displayManager.ScreenSize);
+        base.Open();
     }
 
     protected override void Dispose(bool disposing)

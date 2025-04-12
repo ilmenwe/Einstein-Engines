@@ -10,6 +10,7 @@ public abstract partial class SharedOfferItemSystem : EntitySystem
 
     public override void Initialize()
     {
+        base.Initialize();
         SubscribeLocalEvent<OfferItemComponent, InteractUsingEvent>(SetInReceiveMode);
         SubscribeLocalEvent<OfferItemComponent, MoveEvent>(OnMove);
 

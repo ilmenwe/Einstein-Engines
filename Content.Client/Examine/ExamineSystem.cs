@@ -46,6 +46,7 @@ namespace Content.Client.Examine
 
         public override void Initialize()
         {
+            base.Initialize();
             UpdatesOutsidePrediction = true;
 
             SubscribeLocalEvent<GetVerbsEvent<ExamineVerb>>(AddExamineVerb);

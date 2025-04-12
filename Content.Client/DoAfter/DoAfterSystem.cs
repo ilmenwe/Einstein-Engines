@@ -32,6 +32,7 @@ public sealed class DoAfterSystem : SharedDoAfterSystem
 
     public override void Update(float frameTime)
     {
+        base.Update(frameTime);
         // Currently this only predicts do afters initiated by the player.
 
         // TODO maybe predict do-afters if the local player is the target of some other players do-after? Specifically

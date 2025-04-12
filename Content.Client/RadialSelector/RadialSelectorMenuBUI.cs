@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using System.Numerics;
 using Content.Client.UserInterface.Controls;
 using Content.Shared.Construction.Prototypes;
@@ -55,6 +55,7 @@ public sealed class RadialSelectorMenuBUI : BoundUserInterface
             _menu.OpenCentered();
         else
             _menu.OpenCenteredAt(_inputManager.MouseScreenPosition.Position / _displayManager.ScreenSize);
+        base.Open();
     }
 
     protected override void UpdateState(BoundUserInterfaceState state)
