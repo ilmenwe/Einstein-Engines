@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using Content.Shared.Body.Organ;
 using Content.Shared.Prototypes;
 using Robust.Shared.Prototypes;
@@ -40,9 +40,9 @@ public sealed class BodyPrototypeSerializer : ITypeReader<BodyPrototype, Mapping
         {
             foreach (var (key, value) in organsNode)
             {
-                if (key is not ValueDataNode)
+                if (value is not ValueDataNode)
                 {
-                    nodes.Add(new ErrorNode(key, $"Key is not a value data node"));
+                    nodes.Add(new ErrorNode(value, $"Key is not a value data node"));
                     continue;
                 }
 
@@ -91,9 +91,9 @@ public sealed class BodyPrototypeSerializer : ITypeReader<BodyPrototype, Mapping
 
             foreach (var (key, value) in slots)
             {
-                if (key is not ValueDataNode)
+                if (value is not ValueDataNode)
                 {
-                    nodes.Add(new ErrorNode(key, $"Key is not a value data node"));
+                    nodes.Add(new ErrorNode(value, $"Key is not a value data node"));
                     continue;
                 }
 
@@ -130,38 +130,40 @@ public sealed class BodyPrototypeSerializer : ITypeReader<BodyPrototype, Mapping
 
         foreach (var (keyNode, valueNode) in slotNodes)
         {
-            var slotId = ((ValueDataNode) keyNode).Value;
-            var slot = ((MappingDataNode) valueNode);
+            if(keyNode != null) { 
+                var slotId = ((string) keyNode);
+                var slot = ((MappingDataNode) valueNode);
 
-            string? part = null;
-            if (slot.TryGet<ValueDataNode>("part", out var value))
-            {
-                part = value.Value;
-            }
-
-            HashSet<string>? connections = null;
-            if (slot.TryGet("connections", out SequenceDataNode? slotConnectionsNode))
-            {
-                connections = new HashSet<string>();
-
-                foreach (var connection in slotConnectionsNode.Cast<ValueDataNode>())
+                string? part = null;
+                if (slot.TryGet<ValueDataNode>("part", out var value))
                 {
-                    connections.Add(connection.Value);
+                    part = value.Value;
                 }
-            }
 
-            Dictionary<string, string>? organs = null;
-            if (slot.TryGet("organs", out MappingDataNode? slotOrgansNode))
-            {
-                organs = new Dictionary<string, string>();
-
-                foreach (var (organKeyNode, organValueNode) in slotOrgansNode)
+                HashSet<string>? connections = null;
+                if (slot.TryGet("connections", out SequenceDataNode? slotConnectionsNode))
                 {
-                    organs.Add(((ValueDataNode) organKeyNode).Value, ((ValueDataNode) organValueNode).Value);
-                }
-            }
+                    connections = new HashSet<string>();
 
-            allConnections.Add(slotId, (part, connections, organs));
+                    foreach (var connection in slotConnectionsNode.Cast<ValueDataNode>())
+                    {
+                        connections.Add(connection.Value);
+                    }
+                }
+
+                Dictionary<string, string>? organs = null;
+                if (slot.TryGet("organs", out MappingDataNode? slotOrgansNode))
+                {
+                    organs = new Dictionary<string, string>();
+
+                    foreach (var (organKeyNode, organValueNode) in slotOrgansNode)
+                    {
+                        organs.Add((organKeyNode), ((ValueDataNode) organValueNode).Value);
+                    }
+                }
+
+                allConnections.Add(slotId, (part, connections, organs));
+            }
         }
 
         foreach (var (slotId, (_, connections, _)) in allConnections)

@@ -1,11 +1,13 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using Content.Shared.Body.Components;
 using Content.Shared.Body.Systems;
 using Robust.Server.GameObjects;
 using Robust.Shared.Containers;
+using Robust.Shared.EntitySerialization.Systems;
 using Robust.Shared.GameObjects;
 using Robust.Shared.Map;
+using Robust.Shared.Utility;
 
 namespace Content.IntegrationTests.Tests.Body;
 
@@ -117,7 +119,7 @@ public sealed class SaveLoadReparentTest
             maps.DeleteMap(mapId);
 
             mapSys.CreateMap(out mapId);
-            Assert.That(mapLoader.TryLoad(mapId, mapPath, out _), Is.True);
+            Assert.That(mapLoader.TryLoadMapWithId(mapId, new ResPath(mapPath), out _, out _), Is.True);
 
             var query = EnumerateQueryEnumerator(
                     entities.EntityQueryEnumerator<BodyComponent>()

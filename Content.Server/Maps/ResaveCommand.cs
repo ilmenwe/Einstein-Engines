@@ -2,9 +2,11 @@ using System.Linq;
 using Content.Server.Administration;
 using Content.Shared.Administration;
 using Robust.Server.GameObjects;
-using Robust.Server.Maps;
+
 using Robust.Shared.Console;
 using Robust.Shared.ContentPack;
+using Robust.Shared.EntitySerialization.Components;
+using Robust.Shared.EntitySerialization.Systems;
 using Robust.Shared.Map;
 using Robust.Shared.Utility;
 
@@ -18,6 +20,7 @@ public sealed class ResaveCommand : LocalizedCommands
 {
     [Dependency] private readonly IEntityManager _entManager = default!;
     [Dependency] private readonly IMapManager _mapManager = default!;
+    [Dependency] private readonly MapSystem _mapSystem = default!;
     [Dependency] private readonly IResourceManager _res = default!;
 
     public override string Command => "resave";
@@ -28,30 +31,27 @@ public sealed class ResaveCommand : LocalizedCommands
 
         foreach (var fn in _res.ContentFindFiles(new ResPath("/Maps/")))
         {
-            var mapId = _mapManager.CreateMap();
-            _mapManager.AddUninitializedMap(mapId);
-            loader.Load(mapId, fn.ToString(), new MapLoadOptions()
-            {
-                StoreMapUids = true,
-                LoadMap = true,
-            });
+            var mapEntity = _mapSystem.CreateUninitializedMap();
+
+            
+            loader.TryLoadMapWithId(mapEntity.Comp1.MapId, fn, out _, out _);
 
             // Process deferred component removals.
             _entManager.CullRemovedComponents();
 
-            var mapUid = _mapManager.GetMapEntityId(mapId);
+            var mapUid = _mapManager.GetMapEntityId(mapEntity.Comp1.MapId);
             var mapXform = _entManager.GetComponent<TransformComponent>(mapUid);
 
             if (_entManager.HasComponent<LoadedMapComponent>(mapUid) || mapXform.ChildCount != 1)
             {
-                loader.SaveMap(mapId, fn.ToString());
+                loader.TrySaveMap(mapEntity.Comp1.MapId, fn);
             }
             else if (mapXform.ChildEnumerator.MoveNext(out var child))
             {
-                loader.Save(child, fn.ToString());
+                loader.TrySaveEntity(child, fn);
             }
 
-            _mapManager.DeleteMap(mapId);
+            _mapManager.DeleteMap(mapEntity.Comp1.MapId);
         }
     }
 }

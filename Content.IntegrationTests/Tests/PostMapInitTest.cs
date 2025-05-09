@@ -12,6 +12,7 @@ using Content.Shared.Roles;
 using Robust.Server.GameObjects;
 using Robust.Shared.Configuration;
 using Robust.Shared.ContentPack;
+using Robust.Shared.EntitySerialization.Systems;
 using Robust.Shared.GameObjects;
 using Robust.Shared.Map;
 using Robust.Shared.Map.Components;
@@ -99,7 +100,7 @@ namespace Content.IntegrationTests.Tests
                 try
                 {
 #pragma warning disable NUnit2045
-                    Assert.That(mapLoader.TryLoad(mapId, mapFile, out var roots));
+                    Assert.That(mapLoader.TryLoadMapWithId(mapId, new ResPath(mapFile), out _, out var roots));
                     Assert.That(roots.Where(uid => entManager.HasComponent<MapGridComponent>(uid)), Is.Not.Empty);
 #pragma warning restore NUnit2045
                 }
@@ -227,7 +228,7 @@ namespace Content.IntegrationTests.Tests
                 {
                     var shuttlePath = stationEvac.EmergencyShuttlePath;
 #pragma warning disable NUnit2045
-                    Assert.That(mapLoader.TryLoad(shuttleMap, shuttlePath.ToString(), out var roots));
+                    Assert.That(mapLoader.TryLoadMapWithId(shuttleMap, shuttlePath, out _, out var roots));
                     EntityUid shuttle = default!;
                     Assert.DoesNotThrow(() =>
                     {
@@ -384,7 +385,7 @@ namespace Content.IntegrationTests.Tests
                         mapSystem.CreateMap(out var mapId);
                         try
                         {
-                            Assert.That(mapLoader.TryLoad(mapId, mapName, out _));
+                            Assert.That(mapLoader.TryLoadMapWithId(mapId, new ResPath(mapName), out _, out _));
                         }
                         catch (Exception ex)
                         {

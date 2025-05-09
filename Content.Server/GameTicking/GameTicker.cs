@@ -16,6 +16,7 @@ using Content.Shared.GameTicking;
 using Content.Shared.Mind;
 using Content.Shared.Mobs.Systems;
 using Content.Shared.Roles;
+using Pidgin.Configuration;
 using Robust.Server;
 using Robust.Server.GameObjects;
 using Robust.Server.GameStates;
@@ -24,6 +25,7 @@ using Robust.Shared.Audio;
 using Robust.Shared.Audio.Systems;
 using Robust.Shared.Configuration;
 using Robust.Shared.Console;
+using Robust.Shared.EntitySerialization.Systems;
 using Robust.Shared.Map;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
@@ -77,7 +79,7 @@ namespace Content.Server.GameTicking
         [ViewVariables] private bool _initialized;
         [ViewVariables] private bool _postInitialized;
 
-        [ViewVariables] public MapId DefaultMap { get; private set; }
+        [ViewVariables] public MapId DefaultMap { get; private set; } = default!;
 
         private ISawmill _sawmill = default!;
 

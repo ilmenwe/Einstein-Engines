@@ -1,8 +1,10 @@
 using Robust.Server.GameObjects;
+using Robust.Shared.EntitySerialization.Systems;
 using Robust.Shared.Map;
 using Robust.Shared.Map.Components;
 using Robust.Shared.Network;
 using Robust.Shared.Player;
+using Robust.Shared.Utility;
 
 namespace Content.Server.Administration.Systems;
 
@@ -35,13 +37,17 @@ public sealed class AdminTestArenaSystem : EntitySystem
             }
         }
 
+        ResPath arenaResPath = new ResPath(ArenaMapPath);
         ArenaMap[admin.UserId] = _mapManager.GetMapEntityId(_mapManager.CreateMap());
         _metaDataSystem.SetEntityName(ArenaMap[admin.UserId], $"ATAM-{admin.Name}");
-        var grids = _map.LoadMap(Comp<MapComponent>(ArenaMap[admin.UserId]).MapId, ArenaMapPath);
-        if (grids.Count != 0)
+        MapId mapId = Comp<MapComponent>(ArenaMap[admin.UserId]).MapId;
+        if (_map.TryLoadMapWithId(mapId, arenaResPath, out var map,out var grids3))
         {
-            _metaDataSystem.SetEntityName(grids[0], $"ATAG-{admin.Name}");
-            ArenaGrid[admin.UserId] = grids[0];
+            if(admin.AttachedEntity != null)
+            {
+                _metaDataSystem.SetEntityName(admin.AttachedEntity.Value, $"ATAG-{admin.Name}");
+                ArenaGrid[admin.UserId] = admin.AttachedEntity.Value;
+            }
         }
         else
         {

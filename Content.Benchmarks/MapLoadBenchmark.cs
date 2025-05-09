@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,9 +9,11 @@ using Content.Server.Maps;
 using Robust.Server.GameObjects;
 using Robust.Shared;
 using Robust.Shared.Analyzers;
+using Robust.Shared.EntitySerialization.Systems;
 using Robust.Shared.GameObjects;
 using Robust.Shared.Map;
 using Robust.Shared.Prototypes;
+using Robust.Shared.Utility;
 
 namespace Content.Benchmarks;
 
@@ -60,7 +62,7 @@ public class MapLoadBenchmark
         var server = _pair.Server;
         await server.WaitPost(() =>
         {
-            var success = _mapLoader.TryLoad(new MapId(10), mapPath, out _);
+            var success = _mapLoader.TryLoadMapWithId(new MapId(10), new ResPath(mapPath), out _, out _);
             if (!success)
                 throw new Exception("Map load failed");
         });

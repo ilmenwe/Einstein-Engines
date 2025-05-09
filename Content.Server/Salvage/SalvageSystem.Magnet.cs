@@ -6,7 +6,7 @@ using Content.Shared.Humanoid;
 using Content.Shared.Mobs.Components;
 using Content.Shared.Radio;
 using Content.Shared.Salvage.Magnet;
-using Robust.Server.Maps;
+using Robust.Shared.EntitySerialization;
 using Robust.Shared.Map;
 
 namespace Content.Server.Salvage;

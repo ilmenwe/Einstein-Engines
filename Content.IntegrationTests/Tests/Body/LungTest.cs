@@ -6,9 +6,11 @@ using Content.Shared.Body.Components;
 using Robust.Server.GameObjects;
 using Robust.Shared;
 using Robust.Shared.Configuration;
+using Robust.Shared.EntitySerialization.Systems;
 using Robust.Shared.GameObjects;
 using Robust.Shared.Map;
 using Robust.Shared.Map.Components;
+using Robust.Shared.Utility;
 using System.Linq;
 using System.Numerics;
 
@@ -74,7 +76,7 @@ namespace Content.IntegrationTests.Tests.Body
             await server.WaitPost(() =>
             {
                 mapSys.CreateMap(out var mapId);
-                Assert.That(mapLoader.TryLoad(mapId, testMapName, out var roots));
+                Assert.That(mapLoader.TryLoadMapWithId(mapId, new ResPath(testMapName), out _, out var roots));
 
                 var query = entityManager.GetEntityQuery<MapGridComponent>();
                 var grids = roots.Where(x => query.HasComponent(x));
@@ -154,10 +156,10 @@ namespace Content.IntegrationTests.Tests.Body
             {
                 mapSys.CreateMap(out var mapId);
 
-                Assert.That(mapLoader.TryLoad(mapId, testMapName, out var ents), Is.True);
+                Assert.That(mapLoader.TryLoadMapWithId(mapId, new ResPath(testMapName), out _, out var ents), Is.True);
                 var query = entityManager.GetEntityQuery<MapGridComponent>();
                 grid = ents
-                    .Select<EntityUid, EntityUid?>(x => x)
+                    .Select<Entity<MapGridComponent>, Entity<MapGridComponent>?>(x => x)
                     .FirstOrDefault((uid) => uid.HasValue && query.HasComponent(uid.Value), null);
                 Assert.That(grid, Is.Not.Null);
             });

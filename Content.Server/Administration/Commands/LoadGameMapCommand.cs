@@ -3,9 +3,10 @@ using System.Numerics;
 using Content.Server.GameTicking;
 using Content.Server.Maps;
 using Content.Shared.Administration;
-using Robust.Server.Maps;
+
 using Robust.Shared.Console;
 using Robust.Shared.ContentPack;
+using Robust.Shared.EntitySerialization;
 using Robust.Shared.Map;
 using Robust.Shared.Prototypes;
 
@@ -37,16 +38,17 @@ namespace Content.Server.Administration.Commands
                 if (!int.TryParse(args[0], out var mapId))
                     return;
 
-                var loadOptions = new MapLoadOptions()
-                {
-                    LoadMap = false,
-                };
+                MapLoadOptions? loadOptions = new();
+
 
                 var stationName = args.Length == 5 ? args[4] : null;
 
                 if (args.Length >= 4 && int.TryParse(args[2], out var x) && int.TryParse(args[3], out var y))
                 {
-                    loadOptions.Offset = new Vector2(x, y);
+                    if(loadOptions != null)
+                    {
+                        loadOptions.Offset = new Vector2(x, y);
+                    }
                 }
                 var grids = gameTicker.LoadGameMap(gameMap, new MapId(mapId), loadOptions, stationName);
                 shell.WriteLine($"Loaded {grids.Count} grids.");

@@ -2,9 +2,11 @@ using System.IO;
 using System.Linq;
 using Content.Shared.CCVar;
 using Robust.Server.GameObjects;
-using Robust.Server.Maps;
+
 using Robust.Shared.Configuration;
 using Robust.Shared.ContentPack;
+using Robust.Shared.EntitySerialization;
+using Robust.Shared.EntitySerialization.Systems;
 using Robust.Shared.GameObjects;
 using Robust.Shared.Map;
 using Robust.Shared.Map.Components;
@@ -39,7 +41,7 @@ namespace Content.IntegrationTests.Tests
                 mapSystem.CreateMap(out var mapId1);
                 EntityUid grid1 = default!;
 #pragma warning disable NUnit2045
-                Assert.That(mapLoader.TryLoad(mapId1, "save load save 1.yml", out var roots, new MapLoadOptions() { LoadMap = false }), $"Failed to load test map {TestMap}");
+                Assert.That(mapLoader.TryLoadMapWithId(mapId1, new ResPath("save load save 1.yml"), out var roots, out _ ), $"Failed to load test map {TestMap}");
                 Assert.DoesNotThrow(() =>
                 {
                     grid1 = roots.First(uid => entManager.HasComponent<MapGridComponent>(uid));
@@ -201,7 +203,7 @@ namespace Content.IntegrationTests.Tests
             {
                 mapSystem.CreateMap(out mapId, runMapInit: false);
                 mapManager.SetMapPaused(mapId, true);
-                Assert.That(mapLoader.TryLoad(mapId, TestMap, out _), $"Failed to load test map {TestMap}");
+                Assert.That(mapLoader.TryLoadMapWithId(mapId, new ResPath(TestMap), out _, out _), $"Failed to load test map {TestMap}");
                 mapLoader.SaveMap(mapId, fileA);
             });
 
@@ -220,8 +222,8 @@ namespace Content.IntegrationTests.Tests
                 mapManager.DeleteMap(mapId);
                 mapSystem.CreateMap(out mapId, runMapInit: false);
                 mapManager.SetMapPaused(mapId, true);
-                Assert.That(mapLoader.TryLoad(mapId, TestMap, out _), $"Failed to load test map {TestMap}");
-                mapLoader.SaveMap(mapId, fileB);
+                Assert.That(mapLoader.TryLoadMapWithId(mapId, new ResPath(TestMap), out _, out _), $"Failed to load test map {TestMap}");
+                mapLoader.TrySaveMap(mapId, new ResPath(fileB));
             });
 
             await server.WaitIdleAsync();

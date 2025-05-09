@@ -1,4 +1,4 @@
-﻿#nullable enable
+#nullable enable
 using System;
 using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
@@ -9,9 +9,11 @@ using Content.Shared.Item;
 using Robust.Server.GameObjects;
 using Robust.Shared;
 using Robust.Shared.Analyzers;
+using Robust.Shared.EntitySerialization.Systems;
 using Robust.Shared.GameObjects;
 using Robust.Shared.Map;
 using Robust.Shared.Random;
+using Robust.Shared.Utility;
 
 namespace Content.Benchmarks;
 
@@ -37,7 +39,7 @@ public class EntityQueryBenchmark
         _pair.Server.ResolveDependency<IRobustRandom>().SetSeed(42);
         _pair.Server.WaitPost(() =>
         {
-            var success = _entMan.System<MapLoaderSystem>().TryLoad(_mapId, Map, out _);
+            var success = _entMan.System<MapLoaderSystem>().TryLoadMapWithId(_mapId, new ResPath(Map), out _, out _);
             if (!success)
                 throw new Exception("Map load failed");
             _pair.Server.MapMan.DoMapInitialize(_mapId);

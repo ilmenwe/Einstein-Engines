@@ -49,7 +49,7 @@ public sealed class ContainerFillSerializer : ITypeValidator<Dictionary<string, 
 
         foreach (var (key, val) in node.Children)
         {
-            var keyVal = serializationManager.ValidateNode<string>(key, context);
+            var keyVal = serializationManager.ValidateNode<string>(val, context);
 
             var listVal = (val is SequenceDataNode seq)
                 ? ListSerializer.Validate(serializationManager, seq, dependencies, context)

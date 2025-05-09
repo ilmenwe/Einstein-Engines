@@ -1,5 +1,5 @@
 using Robust.Server.GameObjects;
-using Robust.Server.Maps;
+
 using Robust.Shared.Configuration;
 using Robust.Shared.Map;
 using Robust.Shared.Prototypes;
@@ -13,6 +13,8 @@ using Content.Shared.GameTicking.Components;
 using Content.Shared.Random.Helpers;
 using Content.Shared.Salvage;
 using System.Linq;
+using Robust.Shared.EntitySerialization.Systems;
+using Robust.Shared.EntitySerialization;
 
 namespace Content.Server.StationEvents.Events;
 
@@ -55,13 +57,15 @@ public sealed class PirateRadioSpawnRule : StationEventSystem<PirateRadioSpawnRu
         var outpostOptions = new MapLoadOptions
         {
             Offset = _xform.GetWorldPosition(targetStation) + randomOffset,
-            LoadMap = false,
         };
 
-        if (!_map.TryLoad(Transform(targetStation).MapID, _random.Pick(component.PirateRadioShuttlePath), out var outpostids, outpostOptions))
+        if (!_map.TryLoadMapWithId(Transform(targetStation).MapID, new Robust.Shared.Utility.ResPath( _random.Pick(component.PirateRadioShuttlePath)), out var outpostids,out var grids))
             return;
 
-        SpawnDebris(component, outpostids);
+        if(grids != null)
+        { 
+            SpawnDebris(component, grids.Select(g => g.Owner).ToList());
+        }
     }
 
     private void SpawnDebris(PirateRadioSpawnRuleComponent component, IReadOnlyList<EntityUid> outpostids)
@@ -82,7 +86,7 @@ public sealed class PirateRadioSpawnRule : StationEventSystem<PirateRadioSpawnRu
                 var debrisOptions = new MapLoadOptions
                 {
                     Offset = outpostaabb + debrisRandomOffset + randomer,
-                    LoadMap = false,
+
                 };
 
                 var salvPrototypes = _prototypeManager.EnumeratePrototypes<SalvageMapPrototype>().ToList();
@@ -95,7 +99,7 @@ public sealed class PirateRadioSpawnRule : StationEventSystem<PirateRadioSpawnRu
                 if (GameTicker.DefaultMap == MapId.Nullspace)
                     return;
 
-                if (!_map.TryLoad(GameTicker.DefaultMap, salvageProto.MapPath.ToString(), out _, debrisOptions))
+                if (!_map.TryLoadMapWithId(GameTicker.DefaultMap, salvageProto.MapPath, out _, out _, offset:debrisOptions.Offset))
                     return;
 
                 k++;

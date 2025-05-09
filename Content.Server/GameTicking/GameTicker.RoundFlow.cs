@@ -13,7 +13,6 @@ using Content.Shared.Players;
 using Content.Shared.Preferences;
 using JetBrains.Annotations;
 using Prometheus;
-using Robust.Server.Maps;
 using Robust.Shared.Asynchronous;
 using Robust.Shared.Audio;
 using Robust.Shared.Map;
@@ -22,6 +21,8 @@ using Robust.Shared.Player;
 using Robust.Shared.Random;
 using Robust.Shared.Utility;
 using Content.Server.Announcements.Systems;
+using Robust.Server.GameObjects;
+using Robust.Shared.EntitySerialization;
 
 namespace Content.Server.GameTicking
 {
@@ -31,6 +32,8 @@ namespace Content.Server.GameTicking
         [Dependency] private readonly RoleSystem _role = default!;
         [Dependency] private readonly ITaskManager _taskManager = default!;
         [Dependency] private readonly AnnouncerSystem _announcer = default!;
+        [Dependency] private readonly MapSystem _mapSystem = default!;
+
 
         private static readonly Counter RoundNumberMetric = Metrics.CreateCounter(
             "ss14_round_number",
@@ -89,13 +92,15 @@ namespace Content.Server.GameTicking
         /// </remarks>
         private void LoadMaps()
         {
-            if (_mapManager.MapExists(DefaultMap))
+
+            if (_mapSystem.MapExists(DefaultMap))
+            {
                 return;
+            }
 
             AddGamePresetRules();
 
-            DefaultMap = _mapManager.CreateMap();
-            _mapManager.AddUninitializedMap(DefaultMap);
+            _mapSystem.CreateMap(DefaultMap, false);
 
             var maps = new List<GameMapPrototype>();
 
@@ -140,8 +145,8 @@ namespace Content.Server.GameTicking
                 if (maps[0] != map)
                 {
                     // Create other maps for the others since we need to.
-                    toLoad = _mapManager.CreateMap();
-                    _mapManager.AddUninitializedMap(toLoad);
+
+                    _mapSystem.CreateMap(out toLoad, false);
                 }
 
                 LoadGameMap(map, toLoad, null);
@@ -167,11 +172,11 @@ namespace Content.Server.GameTicking
             var ev = new PreGameMapLoad(targetMapId, map, loadOpts);
             RaiseLocalEvent(ev);
 
-            var gridIds = _map.LoadMap(targetMapId, ev.GameMap.MapPath.ToString(), ev.Options);
+            _map.TryLoadMapWithId(targetMapId, ev.GameMap.MapPath, out _, out var gridIds, offset: ev.Options.Offset, rot: ev.Options.Rotation);
 
             _metaData.SetEntityName(_mapManager.GetMapEntityId(targetMapId), $"station map - {map.MapName}");
 
-            var gridUids = gridIds.ToList();
+            var gridUids = gridIds!.Select(g => g.Owner).ToList();
             RaiseLocalEvent(new PostGameMapLoad(map, targetMapId, gridUids, stationName));
 
             return gridUids;

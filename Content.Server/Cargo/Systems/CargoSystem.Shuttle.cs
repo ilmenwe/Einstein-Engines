@@ -13,7 +13,7 @@ using Content.Shared.GameTicking;
 using Content.Shared.Shuttles.Components;
 using Content.Shared.Tiles;
 using Content.Shared.Whitelist;
-using Robust.Server.Maps;
+
 using Robust.Shared.Map;
 using Robust.Shared.Random;
 using Robust.Shared.Audio;
@@ -21,6 +21,7 @@ using Robust.Shared.Physics.Components;
 using Robust.Shared.Utility;
 using Robust.Shared.Configuration;
 using Robust.Shared.Map.Components;
+using Robust.Shared.EntitySerialization;
 
 namespace Content.Server.Cargo.Systems;
 
@@ -384,10 +385,9 @@ public sealed partial class CargoSystem
 
         var options = new MapLoadOptions
         {
-            LoadMap = true,
         };
 
-        _mapLoader.TryLoad((MapId) CargoMap, "/Maps/Shuttles/trading_outpost.yml", out var rootUids, options); // Oh boy oh boy, hardcoded paths!
+        _mapLoader.TryLoadMapWithId((MapId) CargoMap, new ResPath("/Maps/Shuttles/trading_outpost.yml"), out _, out var rootUids, options); // Oh boy oh boy, hardcoded paths!
 
         // If this fails to load for whatever reason, cargo is fucked
         if (rootUids == null || !rootUids.Any())

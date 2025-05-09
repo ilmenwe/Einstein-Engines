@@ -2,9 +2,14 @@ using Content.Server.GameTicking.Rules.Components;
 using Content.Server.GridPreloader;
 using Content.Shared.GameTicking.Components;
 using Robust.Server.GameObjects;
-using Robust.Server.Maps;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using Robust.Shared.EntitySerialization;
+using Robust.Shared.EntitySerialization.Systems;
 using Robust.Shared.Map;
 using Robust.Shared.Prototypes;
+using System.Linq;
 
 namespace Content.Server.GameTicking.Rules;
 
@@ -19,6 +24,7 @@ public sealed class LoadMapRuleSystem : GameRuleSystem<LoadMapRuleComponent>
 
     protected override void Added(EntityUid uid, LoadMapRuleComponent comp, GameRuleComponent rule, GameRuleAddedEvent args)
     {
+        IReadOnlyList<EntityUid> grids = default!;
         if (comp.PreloadedGrid != null && !_gridPreloader.PreloadingEnabled)
         {
             // Preloading will never work if it's disabled, duh
@@ -32,16 +38,16 @@ public sealed class LoadMapRuleSystem : GameRuleSystem<LoadMapRuleComponent>
 
         Log.Info($"Created map {mapId} for {ToPrettyString(uid):rule}");
 
-        IReadOnlyList<EntityUid> grids;
         if (comp.GameMap != null)
         {
+            MapLoadOptions? opt = new MapLoadOptions();
             var gameMap = _prototypeManager.Index(comp.GameMap.Value);
-            grids = GameTicker.LoadGameMap(gameMap, mapId, new MapLoadOptions());
+            grids = GameTicker.LoadGameMap(gameMap, mapId, null);
         }
         else if (comp.MapPath is {} path)
         {
-            var options = new MapLoadOptions { LoadMap = true };
-            if (!_mapLoader.TryLoad(mapId, path.ToString(), out var roots, options))
+
+            if (!_mapLoader.TryLoadMapWithId(mapId, path, out var roots, out var grids2))
             {
                 Log.Error($"Failed to load map from {path}!");
                 Del(mapUid);
@@ -49,7 +55,6 @@ public sealed class LoadMapRuleSystem : GameRuleSystem<LoadMapRuleComponent>
                 return;
             }
 
-            grids = roots;
         }
         else if (comp.PreloadedGrid is {} preloaded)
         {
@@ -73,8 +78,7 @@ public sealed class LoadMapRuleSystem : GameRuleSystem<LoadMapRuleComponent>
             ForceEndSelf(uid, rule);
             return;
         }
-
-        var ev = new RuleLoadedGridsEvent(mapId, grids);
+        var ev = new RuleLoadedGridsEvent(mapId, grids.ToList());
         RaiseLocalEvent(uid, ref ev);
     }
 }

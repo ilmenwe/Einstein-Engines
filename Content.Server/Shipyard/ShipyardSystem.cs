@@ -6,6 +6,8 @@ using Content.Shared.DeltaV.CCVars;
 using Content.Shared.Tag;
 using Robust.Server.GameObjects;
 using Robust.Shared.Configuration;
+using Robust.Shared.EntitySerialization.Systems;
+using Robust.Shared.Utility;
 
 namespace Content.Server.Shipyard;
 
@@ -44,7 +46,7 @@ public sealed class ShipyardSystem : EntitySystem
         var map = _map.CreateMap(out var mapId);
         _map.SetPaused(map, false);
 
-        if (!_mapLoader.TryLoad(mapId, path, out var grids))
+        if (!_mapLoader.TryLoadMapWithId(mapId, new ResPath(path), out var maps, out var grids))
         {
             Log.Error($"Failed to load shuttle {path}");
             Del(map);
@@ -60,16 +62,19 @@ public sealed class ShipyardSystem : EntitySystem
             return null;
         }
 
-        var uid = grids[0];
+        var uid = grids.FirstOrNull()?.Owner;
         if (!TryComp<ShuttleComponent>(uid, out var comp))
         {
             Log.Error($"Shuttle {path}'s grid was missing ShuttleComponent");
             Del(map);
             return null;
         }
-
-        _mapDeleterShuttle.Enable(uid);
-        return (uid, comp);
+        if (uid != null)
+        {
+            _mapDeleterShuttle.Enable(uid.Value);
+        }
+        
+        return new Entity<ShuttleComponent>(comp.Owner, comp);
     }
 
     /// <summary>

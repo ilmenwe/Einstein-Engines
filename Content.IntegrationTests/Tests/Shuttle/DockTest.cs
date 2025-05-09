@@ -4,6 +4,7 @@ using System.Numerics;
 using Content.Server.Shuttles.Systems;
 using Content.Tests;
 using Robust.Server.GameObjects;
+using Robust.Shared.EntitySerialization.Systems;
 using Robust.Shared.GameObjects;
 using Robust.Shared.Map;
 using Robust.Shared.Map.Components;

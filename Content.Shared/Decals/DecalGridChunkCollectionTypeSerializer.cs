@@ -47,7 +47,7 @@ namespace Content.Shared.Decals
 
                     foreach (var (decalUidNode, decalData) in deckNodes)
                     {
-                        var dUid = serializationManager.Read<uint>(decalUidNode, hookCtx, context);
+                        var dUid = serializationManager.Read<uint>(decalData, hookCtx, context);
                         var coords = serializationManager.Read<Vector2>(decalData, hookCtx, context);
 
                         var chunkOrigin = SharedMapSystem.GetChunkIndices(coords, SharedDecalSystem.ChunkSize);
@@ -140,7 +140,7 @@ namespace Content.Shared.Decals
             foreach (var data in lookupNodes)
             {
                 var uids = lookup[data];
-                var lookupNode = new MappingDataNode { { "node", serializationManager.WriteValue(data, alwaysWrite, context) } };
+                var lookupNode = new MappingDataNode { { "node", serializationManager!.WriteValue(data, alwaysWrite, context) } };
                 var decks = new MappingDataNode();
 
                 uids.Sort();
@@ -149,7 +149,10 @@ namespace Content.Shared.Decals
                 {
                     var decal = decalLookup[uid];
                     // Inline coordinates
-                    decks.Add(serializationManager.WriteValue(uid, alwaysWrite, context), serializationManager.WriteValue(decal.Coordinates, alwaysWrite, context));
+                    var value2 = serializationManager!.WriteValue(uid, alwaysWrite, context) as ValueDataNode;
+                    var value3 = serializationManager.WriteValue(decal.Coordinates, alwaysWrite, context) as DataNode;
+                    decks!.Add(value2!, value3 );
+
                 }
 
                 lookupNode.Add("decals", decks);

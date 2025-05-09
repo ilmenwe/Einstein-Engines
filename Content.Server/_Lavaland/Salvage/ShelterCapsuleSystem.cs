@@ -1,12 +1,14 @@
-﻿using System.Linq;
+using System.Linq;
 using Content.Server._Lavaland.Procedural.Components;
 using Content.Server.Fluids.EntitySystems;
 using Content.Server.GridPreloader;
 using Content.Shared._Lavaland.Shelter;
 using Content.Shared.Chemistry.Components;
 using Robust.Server.GameObjects;
+using Robust.Shared.EntitySerialization.Systems;
 using Robust.Shared.Map;
 using Robust.Shared.Prototypes;
+using Robust.Shared.Utility;
 
 namespace Content.Server._Lavaland.Salvage;
 
@@ -64,7 +66,7 @@ public sealed class ShelterCapsuleSystem : SharedShelterCapsuleSystem
         if (!_preloader.TryGetPreloadedGrid(comp.PreloadedGrid, out var shelter))
         {
             _mapSystem.CreateMap(out var dummyMap);
-            if (!_mapLoader.TryLoad(dummyMap, path, out var roots) || roots.Count != 1)
+            if (!_mapLoader.TryLoadMapWithId(dummyMap, new ResPath( path), out _, out var roots) || roots.Count != 1)
             {
                 Log.Error("Failed to load Shelter grid properly on it's deployment.");
                 return false;

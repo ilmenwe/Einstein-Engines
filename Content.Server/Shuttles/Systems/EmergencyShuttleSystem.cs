@@ -27,7 +27,7 @@ using Content.Shared.Shuttles.Events;
 using Content.Shared.Tag;
 using Content.Shared.Tiles;
 using Robust.Server.GameObjects;
-using Robust.Server.Maps;
+
 using Robust.Shared.Audio.Systems;
 using Robust.Shared.Configuration;
 using Robust.Shared.Map;
@@ -37,6 +37,8 @@ using Robust.Shared.Random;
 using Robust.Shared.Timing;
 using Robust.Shared.Utility;
 using Content.Server.Announcements.Systems;
+using Robust.Shared.EntitySerialization.Systems;
+using Robust.Shared.EntitySerialization;
 
 namespace Content.Server.Shuttles.Systems;
 
@@ -444,13 +446,9 @@ public sealed partial class EmergencyShuttleSystem : EntitySystem
         }
 
         var map = _mapSystem.CreateMap(out var mapId);
-        var grid = _map.LoadGrid(
+        _map.TryLoadGrid(
             mapId,
-            mapPath,
-            new()
-            {
-                LoadMap = false,
-            });
+            new ResPath(mapPath), out var grid);
 
         if (!Exists(map) || map == EntityUid.Invalid)
         {
@@ -523,13 +521,8 @@ public sealed partial class EmergencyShuttleSystem : EntitySystem
 
         // Load escape shuttle
         var shuttlePath = ent.Comp1.EmergencyShuttlePath;
-        var shuttle = _map.LoadGrid(map.MapId, shuttlePath.ToString(), new MapLoadOptions()
-        {
-            // Should be far enough... right? I'm too lazy to bounds check CentCom rn.
-            Offset = new Vector2(500f + ent.Comp2.ShuttleIndex, 0f),
+        _map.TryLoadGrid(map.MapId, shuttlePath, out var shuttle, offset: new Vector2(500f + ent.Comp2.ShuttleIndex, 0f));
             // fun fact: if you just fucking yeet centcomm into nullspace anytime you try to spawn the shuttle, then any distance is far enough. so lets not do that
-            LoadMap = false,
-        });
 
         if (shuttle == null)
         {
