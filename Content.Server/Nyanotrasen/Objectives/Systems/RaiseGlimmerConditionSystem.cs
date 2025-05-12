@@ -6,7 +6,6 @@ namespace Content.Server.Objectives.Systems
 {
     public sealed class RaiseGlimmerConditionSystem : EntitySystem
     {
-        [Dependency] private readonly IEntitySystemManager _sysMan = default!;
         [Dependency] private readonly MetaDataSystem _metaData = default!;
         [Dependency] private readonly GlimmerSystem _glimmer = default!;
         public override void Initialize()

@@ -27,7 +27,6 @@ public sealed class ModularComputerSystem : EntitySystem
 
     [Dependency] private readonly SharedTransformSystem _transform = default!;
 
-    [Dependency] private readonly IGameTiming _gameTiming = default!;
 
     [Dependency] private readonly SharedPowerReceiverSystem _power = default!;
 

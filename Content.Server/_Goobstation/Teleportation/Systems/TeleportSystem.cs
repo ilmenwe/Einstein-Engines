@@ -31,9 +31,6 @@ public sealed class TeleportSystem : EntitySystem
     [Dependency] private readonly PullingSystem _pullingSystem = default!;
     [Dependency] private readonly IAdminLogManager _alog = default!;
     [Dependency] private readonly StackSystem _stack = default!;
-    [Dependency] private readonly SharedMapSystem _map = default!;
-    [Dependency] private readonly EntityLookupSystem _lookup = default!;
-    [Dependency] private readonly IPrototypeManager _prot = default!;
 
     private EntityQuery<PhysicsComponent> _physicsQuery;
 

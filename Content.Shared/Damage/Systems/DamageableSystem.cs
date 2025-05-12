@@ -25,12 +25,12 @@ namespace Content.Shared.Damage
         [Dependency] private readonly SharedAppearanceSystem _appearance = default!;
         [Dependency] private readonly INetManager _netMan = default!;
         [Dependency] private readonly SharedBodySystem _body = default!; // Shitmed Change
-        [Dependency] private readonly IRobustRandom _random = default!; // Shitmed Change
+
         [Dependency] private readonly MobThresholdSystem _mobThreshold = default!;
 
         private EntityQuery<AppearanceComponent> _appearanceQuery;
         private EntityQuery<DamageableComponent> _damageableQuery;
-        private EntityQuery<MindContainerComponent> _mindContainerQuery;
+
 
         public override void Initialize()
         {
@@ -42,7 +42,6 @@ namespace Content.Shared.Damage
 
             _appearanceQuery = GetEntityQuery<AppearanceComponent>();
             _damageableQuery = GetEntityQuery<DamageableComponent>();
-            _mindContainerQuery = GetEntityQuery<MindContainerComponent>();
         }
 
         /// <summary>

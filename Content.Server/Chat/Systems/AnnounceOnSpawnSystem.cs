@@ -6,7 +6,6 @@ namespace Content.Server.Chat.Systems;
 
 public sealed class AnnounceOnSpawnSystem : EntitySystem
 {
-    [Dependency] private readonly ChatSystem _chat = default!;
     [Dependency] private readonly AnnouncerSystem _announcer = default!;
 
     public override void Initialize()

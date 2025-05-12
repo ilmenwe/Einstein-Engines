@@ -22,7 +22,6 @@ namespace Content.Server.GameTicking
     public sealed partial class GameTicker
     {
         [Dependency] private readonly MobThresholdSystem _mobThresholdSystem = default!;
-        [Dependency] private readonly GhostReturnToRoundSystem _ghostReturnToRound = default!;
         public const float PresetFailedCooldownIncrease = 30f;
 
         /// <summary>

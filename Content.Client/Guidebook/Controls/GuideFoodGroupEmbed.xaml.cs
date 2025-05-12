@@ -15,7 +15,6 @@ namespace Content.Client.Guidebook.Controls;
 public sealed partial class GuideFoodGroupEmbed : BoxContainer, IDocumentTag
 {
     [Dependency] private readonly IEntitySystemManager _sysMan = default!;
-    [Dependency] private readonly IPrototypeManager _prototype = default!;
 
     public GuideFoodGroupEmbed()
     {

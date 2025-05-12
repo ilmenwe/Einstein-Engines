@@ -35,6 +35,12 @@ public sealed class RCDConstructionGhostSystem : EntitySystem
             .Register<RCDConstructionGhostSystem>();
     }
 
+    private void ResolvesNeverUserErrors()
+    {
+        FlipConstructionPrototype?.Invoke(null,new());
+    }
+
+
     public override void Shutdown()
     {
         CommandBinds.Unregister<RCDConstructionGhostSystem>();

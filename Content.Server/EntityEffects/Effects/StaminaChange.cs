@@ -9,7 +9,6 @@ namespace Content.Server.EntityEffects.Effects;
 ///</summary>
 public sealed partial class StaminaChange : EntityEffect
 {
-    [Dependency] private readonly StaminaSystem _stamina = default!;
     protected override string? ReagentEffectGuidebookText(IPrototypeManager prototype, IEntitySystemManager entSys)
         => Loc.GetString("reagent-effect-guidebook-stamina-change", ("chance", Probability), ("deltasign", MathF.Sign(Amount)), ("amount", MathF.Abs(Amount)));
 

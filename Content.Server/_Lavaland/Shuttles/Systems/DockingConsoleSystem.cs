@@ -27,7 +27,6 @@ public sealed class DockingConsoleSystem : SharedDockingConsoleSystem
     [Dependency] private readonly MapLoaderSystem _mapLoader = default!;
     [Dependency] private readonly IMapManager _mapMan = default!;
     [Dependency] private readonly MapSystem _mapSystem = default!;
-    [Dependency] private readonly StationSystem _station = default!;
 
     public override void Initialize()
     {

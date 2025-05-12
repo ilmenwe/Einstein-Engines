@@ -29,7 +29,6 @@ namespace Content.Server.Nuke;
 public sealed class NukeSystem : EntitySystem
 {
     [Dependency] private readonly AlertLevelSystem _alertLevel = default!;
-    [Dependency] private readonly ChatSystem _chatSystem = default!;
     [Dependency] private readonly ExplosionSystem _explosions = default!;
     [Dependency] private readonly IRobustRandom _random = default!;
     [Dependency] private readonly ITileDefinitionManager _tileDefManager = default!;

@@ -564,6 +564,11 @@ namespace Content.Client.Lobby.UI
             IsDirty = false;
         }
 
+        private void ResolvesNeverUserErrors()
+        {
+            OnProfileChanged?.Invoke(new(), -1);
+        }
+
         /// Refreshes the flavor text editor status
         public void RefreshFlavorText()
         {

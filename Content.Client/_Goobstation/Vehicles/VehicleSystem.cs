@@ -9,7 +9,6 @@ public sealed class VehicleSystem : SharedVehicleSystem
 {
     [Dependency] private readonly SharedAppearanceSystem _appearance = default!;
     [Dependency] private readonly IEyeManager _eye = default!;
-    [Dependency] private readonly SpriteSystem _sprites = default!;
 
     public override void Initialize()
     {

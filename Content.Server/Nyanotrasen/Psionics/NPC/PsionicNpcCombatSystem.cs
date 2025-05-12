@@ -13,12 +13,7 @@ namespace Content.Server.Psionics.NPC;
 // TODO this is nyanotrasen shitcode. It works, but it needs to be refactored to be more generic.
 public sealed class PsionicNpcCombatSystem : EntitySystem
 {
-    [Dependency] private readonly IGameTiming _timing = default!;
-    [Dependency] private readonly IPrototypeManager _protoMan = default!;
-    [Dependency] private readonly SharedActionsSystem _actions = default!;
-
     private static readonly ProtoId<PsionicPowerPrototype> NoosphericZapProto = "NoosphericZapPower";
-    private PsionicPowerPrototype NoosphericZap = default!;
 
     public override void Initialize()
     {
@@ -26,7 +21,6 @@ public sealed class PsionicNpcCombatSystem : EntitySystem
 
         SubscribeLocalEvent<NoosphericZapPowerComponent, NPCSteeringEvent>(ZapCombat);
 
-        NoosphericZap = _protoMan.Index(NoosphericZapProto);
     }
 
     private void ZapCombat(Entity<NoosphericZapPowerComponent> ent, ref NPCSteeringEvent args)

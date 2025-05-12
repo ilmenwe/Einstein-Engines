@@ -51,12 +51,10 @@ public sealed partial class CargoSystem : SharedCargoSystem
     [Dependency] private readonly IEntityManager _entityManager = default!;
     [Dependency] private readonly IComponentFactory _factory = default!;
     [Dependency] private readonly MapLoaderSystem _mapLoader = default!;
-    [Dependency] private readonly SharedIdCardSystem _idCardSystem = default!;
 
     private EntityQuery<TransformComponent> _xformQuery;
     private EntityQuery<CargoSellBlacklistComponent> _blacklistQuery;
     private EntityQuery<MobStateComponent> _mobQuery;
-    private EntityQuery<TradeStationComponent> _tradeQuery;
 
     private HashSet<EntityUid> _setEnts = new();
     private List<EntityUid> _listEnts = new();
@@ -69,7 +67,6 @@ public sealed partial class CargoSystem : SharedCargoSystem
         _xformQuery = GetEntityQuery<TransformComponent>();
         _blacklistQuery = GetEntityQuery<CargoSellBlacklistComponent>();
         _mobQuery = GetEntityQuery<MobStateComponent>();
-        _tradeQuery = GetEntityQuery<TradeStationComponent>();
 
         InitializeConsole();
         InitializeShuttle();

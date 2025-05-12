@@ -20,6 +20,11 @@ public sealed partial class DockObject : PanelContainer
     public event Action? ViewPressed;
 
     public BoxContainer ContentsContainer => Contents;
+    private void ResolvesNeverUserErrors()
+    {
+        UndockPressed?.Invoke();
+        ViewPressed?.Invoke();
+    }
 
     public DockObject()
     {

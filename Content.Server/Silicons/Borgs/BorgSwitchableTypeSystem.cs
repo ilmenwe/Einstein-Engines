@@ -1,4 +1,4 @@
-﻿using Content.Server.Inventory;
+using Content.Server.Inventory;
 using Content.Server.Radio.Components;
 using Content.Server.Silicons.Laws;
 using Content.Shared.Inventory;
@@ -18,7 +18,6 @@ public sealed partial class BorgSwitchableTypeSystem : SharedBorgSwitchableTypeS
 {
     [Dependency] private readonly BorgSystem _borgSystem = default!;
     [Dependency] private readonly ServerInventorySystem _inventorySystem = default!;
-    [Dependency] private readonly SiliconLawSystem _siliconLawSystem = default!;
 
     protected override void SelectBorgModule(Entity<BorgSwitchableTypeComponent> ent, ProtoId<BorgTypePrototype> borgType)
     {

@@ -14,6 +14,7 @@ using System.Numerics;
 using Content.Shared.FixedPoint;
 using Robust.Client.Graphics;
 using static Robust.Client.UserInterface.Controls.BoxContainer;
+using Content.Shared.Psionics;
 
 namespace Content.Client.Chemistry.UI
 {
@@ -40,6 +41,12 @@ namespace Content.Client.Chemistry.UI
         private int _transferAmount = 50;
 
         private const string PillsRsiPath = "/Textures/Objects/Specific/Chemistry/pills.rsi";
+
+
+        private void ResolvesNeverUserErrors()
+        {
+            OnUpdateAmounts?.Invoke([]);
+        }
 
         /// <summary>
         /// Create and initialize the chem master UI client-side. Creates the basic layout,

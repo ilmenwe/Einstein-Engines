@@ -20,14 +20,11 @@ namespace Content.Client._EE.Supermatter.Consoles;
 public sealed partial class SupermatterConsoleWindow : FancyWindow
 {
     private readonly IEntityManager _entManager;
-    private readonly SpriteSystem _spriteSystem;
-    private readonly SharedNavMapSystem _navMapSystem;
 
     private EntityUid? _owner;
     private NetEntity? _trackedEntity;
 
     private SupermatterConsoleEntry[]? _supermatters = null;
-    private IEnumerable<SupermatterConsoleEntry>? _activeAlerts = null;
 
     public event Action<NetEntity?>? SendFocusChangeMessageAction;
 
@@ -50,9 +47,6 @@ public sealed partial class SupermatterConsoleWindow : FancyWindow
     {
         RobustXamlLoader.Load(this);
         _entManager = IoCManager.Resolve<IEntityManager>();
-        _spriteSystem = _entManager.System<SpriteSystem>();
-        _navMapSystem = _entManager.System<SharedNavMapSystem>();
-
         // Pass the owner to nav map
         _owner = owner;
 

@@ -6,7 +6,6 @@ namespace Content.Server.Station.Systems;
 
 public sealed class StationSurfaceSystem : EntitySystem
 {
-    [Dependency] private readonly BiomeSystem _biome = default!;
     [Dependency] private readonly MapSystem _map = default!;
     [Dependency] private readonly MapLoaderSystem _mapLoader = default!;
 

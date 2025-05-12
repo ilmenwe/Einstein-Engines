@@ -19,7 +19,6 @@ namespace Content.Shared._Arcadis.Computer;
 
 public sealed class DiskBurnerSystem : EntitySystem
 {
-    [Dependency] private readonly IPrototypeManager _protoMan = default!;
 
     [Dependency] private readonly ItemSlotsSystem _itemSlots = default!;
 
