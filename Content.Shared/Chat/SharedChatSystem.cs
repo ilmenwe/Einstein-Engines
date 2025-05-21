@@ -192,7 +192,10 @@ public abstract class SharedChatSystem : EntitySystem
         string? nameOverride = null,
         bool checkRadioPrefix = true,
         bool ignoreActionBlocker = false
-    ) { }
+    )
+    {
+
+    }
 
     public string SanitizeMessageCapital(string message)
     {
@@ -292,7 +295,9 @@ public abstract class SharedChatSystem : EntitySystem
     public static string InjectTagAroundString(ChatMessage message, string targetString, string tag, string? tagParameter)
     {
         var rawmsg = message.WrappedMessage;
+#pragma warning disable RA0026 // Use of uncached static Regex function
         rawmsg = Regex.Replace(rawmsg, "(?i)(" + targetString + ")(?-i)(?![^[]*])", $"[{tag}={tagParameter}]$1[/{tag}]");
+#pragma warning restore RA0026 // Use of uncached static Regex function
         return rawmsg;
     }
 

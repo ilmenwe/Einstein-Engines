@@ -42,7 +42,7 @@ public sealed class ActionContainerSystem : EntitySystem
         if (!TryComp<ActionsContainerComponent>(mindId, out var mindActionContainerComp))
             return;
 
-        if (!HasComp<GhostComponent>(uid) && mindActionContainerComp.Container.ContainedEntities.Count > 0 )
+        if (!HasComp<GhostComponent>(uid) && mindActionContainerComp.Container.ContainedEntities.Count > 0)
             _actions.GrantContainedActions(uid, mindId);
     }
 
@@ -261,7 +261,7 @@ public sealed class ActionContainerSystem : EntitySystem
         if (action.Container == null)
             return;
 
-        _transform.DetachParentToNull(actionId, Transform(actionId));
+        _transform.DetachEntity(actionId, Transform(actionId));
 
         // Container removal events should have removed the action from the action container.
         // However, just in case the container was already deleted we will still manually clear the container field

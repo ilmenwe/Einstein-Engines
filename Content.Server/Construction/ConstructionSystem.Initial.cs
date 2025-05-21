@@ -357,7 +357,7 @@ namespace Content.Server.Construction
 
             foreach (var condition in constructionPrototype.Conditions)
             {
-                if (!condition.Condition(user, user.ToCoordinates(0, 0), Direction.South))
+                if (!condition.Condition(user, _lookupSystem, user.ToCoordinates(0, 0), Direction.South))
                     return false;
             }
 
@@ -459,7 +459,7 @@ namespace Content.Server.Construction
 
             foreach (var condition in constructionPrototype.Conditions)
             {
-                if (!condition.Condition(user, location, ev.Angle.GetCardinalDir()))
+                if (!condition.Condition(user, _lookupSystem, location, ev.Angle.GetCardinalDir()))
                 {
                     Cleanup();
                     return;

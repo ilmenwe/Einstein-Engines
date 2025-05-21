@@ -72,7 +72,7 @@ public sealed partial class AtmosAlertsComputerWindow : FancyWindow
                 stationName = stationMetaData.EntityName;
 
             var msg = new FormattedMessage();
-            msg.AddMarkup(Loc.GetString("atmos-alerts-window-station-name", ("stationName", stationName)));
+            msg.AddMarkupPermissive(Loc.GetString("atmos-alerts-window-station-name", ("stationName", stationName)));
 
             StationName.SetMessage(msg);
         }
@@ -296,7 +296,7 @@ public sealed partial class AtmosAlertsComputerWindow : FancyWindow
 
                 regionOverlay.Color = regionColor;
 
-                var priority = (_trackedEntity == regionOwner) ? 999 : (int)alarmState;
+                var priority = (_trackedEntity == regionOwner) ? 999 : (int) alarmState;
                 prioritizedRegionOverlays.Add(regionOverlay, priority);
             }
 
@@ -401,7 +401,7 @@ public sealed partial class AtmosAlertsComputerWindow : FancyWindow
             return;
         }
 
-        var entryContainer = (AtmosAlarmEntryContainer)tableChild;
+        var entryContainer = (AtmosAlarmEntryContainer) tableChild;
 
         entryContainer.UpdateEntry(entry, entry.NetEntity == _trackedEntity, focusData);
 
@@ -421,7 +421,7 @@ public sealed partial class AtmosAlertsComputerWindow : FancyWindow
             if (tableChild is not AtmosAlarmEntryContainer)
                 continue;
 
-            var entryContainer = (AtmosAlarmEntryContainer)tableChild;
+            var entryContainer = (AtmosAlarmEntryContainer) tableChild;
 
             if (entryContainer.NetEntity != currTrackedEntity)
                 entryContainer.RemoveAsFocus();
@@ -558,7 +558,7 @@ public sealed partial class AtmosAlertsComputerWindow : FancyWindow
             if (control == null || control is not AtmosAlarmEntryContainer)
                 continue;
 
-            if (((AtmosAlarmEntryContainer)control).NetEntity == _trackedEntity)
+            if (((AtmosAlarmEntryContainer) control).NetEntity == _trackedEntity)
                 return true;
 
             nextScrollPosition += control.Height;

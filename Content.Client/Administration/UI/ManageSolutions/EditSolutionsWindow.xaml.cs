@@ -40,7 +40,6 @@ namespace Content.Client.Administration.UI.ManageSolutions
         {
             base.Close();
             _addReagentWindow?.Close();
-            _addReagentWindow?.Dispose();
         }
 
         public void SetTargetEntity(NetEntity target)
@@ -134,7 +133,7 @@ namespace Content.Client.Administration.UI.ManageSolutions
             var heatCapacityLabel = new Label();
             heatCapacityLabel.HorizontalExpand = true;
             heatCapacityLabel.Margin = new Thickness(0, 1);
-            heatCapacityLabel.Text = Loc.GetString("admin-solutions-window-heat-capacity-label", ("heatCapacity", (heatCap/solution.Volume.Float()).ToString("G3")));
+            heatCapacityLabel.Text = Loc.GetString("admin-solutions-window-heat-capacity-label", ("heatCapacity", (heatCap / solution.Volume.Float()).ToString("G3")));
 
             // Temperature entry:
             var temperatureBox = new BoxContainer();
@@ -194,7 +193,7 @@ namespace Content.Client.Administration.UI.ManageSolutions
             spin.OnValueChanged += (args) => SetReagent(args, reagentQuantity.Reagent.Prototype);
             spin.HorizontalExpand = true;
 
-            box.AddChild(new Label() { Text = reagentQuantity.Reagent.Prototype , HorizontalExpand = true});
+            box.AddChild(new Label() { Text = reagentQuantity.Reagent.Prototype, HorizontalExpand = true });
             box.AddChild(spin);
 
             ReagentList.AddChild(box);
@@ -265,7 +264,7 @@ namespace Content.Client.Administration.UI.ManageSolutions
                 return;
 
             _addReagentWindow?.Close();
-            _addReagentWindow?.Dispose();
+            _addReagentWindow?.Parent?.RemoveChild(_addReagentWindow);
 
             _addReagentWindow = new AddReagentWindow(_target, _selectedSolution);
             _addReagentWindow.OpenCentered();
@@ -325,7 +324,6 @@ namespace Content.Client.Administration.UI.ManageSolutions
             {
                 // No applicable solutions
                 Close();
-                Dispose();
                 return;
             }
 

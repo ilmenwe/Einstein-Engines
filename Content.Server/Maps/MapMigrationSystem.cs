@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using Robust.Server.GameObjects;
@@ -18,8 +18,11 @@ namespace Content.Server.Maps;
 /// </summary>
 public sealed class MapMigrationSystem : EntitySystem
 {
-    [Dependency] private readonly IPrototypeManager _protoMan = default!;
     [Dependency] private readonly IResourceManager _resMan = default!;
+
+#if DEBUG
+    [Dependency] private readonly IPrototypeManager _protoMan = default!;
+#endif
 
     private const string MigrationDir = "/Migrations/";
 
@@ -69,7 +72,7 @@ public sealed class MapMigrationSystem : EntitySystem
                 continue;
 
             mappings = mappings ?? new List<MappingDataNode>();
-            mappings.Add((MappingDataNode)documents.Root);
+            mappings.Add((MappingDataNode) documents.Root);
         }
 
         return mappings != null && mappings.Count > 0;

@@ -131,9 +131,6 @@ namespace Content.Client.Cargo.BUI
             base.Dispose(disposing);
 
             if (!disposing) return;
-
-            _menu?.Dispose();
-            _orderMenu?.Dispose();
         }
 
         private bool AddOrder()

@@ -11,7 +11,6 @@ using Content.Shared.Mind;
 using Content.Shared.Rejuvenate;
 using Content.Shared.Whitelist;
 using Robust.Shared.Audio.Systems;
-using Robust.Shared.Containers;
 using Robust.Shared.GameStates;
 using Robust.Shared.Map;
 using Robust.Shared.Network;
@@ -38,6 +37,7 @@ public abstract class SharedActionsSystem : EntitySystem
     [Dependency] private readonly ActionContainerSystem _actionContainer = default!;
     [Dependency] private readonly EntityWhitelistSystem _whitelistSystem = default!;
     [Dependency] private readonly SharedPopupSystem _popup = default!; // Shitmed Change
+    [Dependency] protected readonly SharedMapSystem MapSystem = default!;
 
     public override void Initialize()
     {
@@ -456,7 +456,7 @@ public abstract class SharedActionsSystem : EntitySystem
                 }
 
                 var entityCoordinatesTarget = GetCoordinates(netCoordinatesTarget);
-                _rotateToFaceSystem.TryFaceCoordinates(user, entityCoordinatesTarget.ToMapPos(EntityManager, _transformSystem));
+                _rotateToFaceSystem.TryFaceCoordinates(user, _transformSystem.ToMapCoordinates(entityCoordinatesTarget).Position);
 
                 if (!ValidateWorldTarget(user, entityCoordinatesTarget, (actionEnt, worldAction)))
                     return;
@@ -473,7 +473,6 @@ public abstract class SharedActionsSystem : EntitySystem
 
                 break;
             case EntityWorldTargetActionComponent entityWorldAction:
-            {
                 var actionEntity = GetEntity(ev.EntityTarget);
                 var actionCoords = GetCoordinates(ev.EntityCoordinatesTarget);
 
@@ -499,7 +498,6 @@ public abstract class SharedActionsSystem : EntitySystem
                     performEvent = entityWorldAction.Event;
                 }
                 break;
-            }
             case InstantActionComponent instantAction:
                 var hasNoSpecificComponents = !HasComp<StationAiOverlayComponent>(user) && !HasComp<AbductorScientistComponent>(user); // Shitmed Change
                 if (action.CheckCanInteract && !_actionBlockerSystem.CanInteract(user, null) && hasNoSpecificComponents) // Shitmed Change
@@ -589,7 +587,7 @@ public abstract class SharedActionsSystem : EntitySystem
         bool checkCanAccess,
         float range)
     {
-        if (entityCoordinates is not { } coords)
+        if (entityCoordinates is not { } coordinates)
             return false;
 
         var hasNoSpecificComponents = !HasComp<StationAiOverlayComponent>(user) && !HasComp<AbductorScientistComponent>(user); // Shitmed Change
@@ -599,9 +597,9 @@ public abstract class SharedActionsSystem : EntitySystem
         if (!checkCanAccess)
         {
             // even if we don't check for obstructions, we may still need to check the range.
-            var xform = Transform(user);
+            var transform = Transform(user);
 
-            if (xform.MapID != coords.GetMapId(EntityManager))
+            if (transform.MapID != _transformSystem.GetMapId(coordinates))
             {
                 _popup.PopupCursor(Loc.GetString("world-target-out-of-range"), user); // Goobstation Change
                 return false;
@@ -610,10 +608,10 @@ public abstract class SharedActionsSystem : EntitySystem
             if (range <= 0)
                 return true;
 
-            return coords.InRange(EntityManager, _transformSystem, Transform(user).Coordinates, range);
+            return _transformSystem.InRange(coordinates, Transform(user).Coordinates, range);
         }
 
-        return _interactionSystem.InRangeUnobstructed(user, coords, range: range);
+        return _interactionSystem.InRangeUnobstructed(user, coordinates, range: range);
     }
 
     public bool ValidateEntityWorldTarget(EntityUid user,

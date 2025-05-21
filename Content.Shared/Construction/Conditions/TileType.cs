@@ -1,4 +1,4 @@
-﻿using Content.Shared.Maps;
+using Content.Shared.Maps;
 using JetBrains.Annotations;
 using Robust.Shared.Map;
 using Robust.Shared.Utility;
@@ -18,7 +18,7 @@ namespace Content.Shared.Construction.Conditions
         [DataField("guideIcon")]
         public SpriteSpecifier? GuideIcon;
 
-        public bool Condition(EntityUid user, EntityCoordinates location, Direction direction)
+        public bool Condition(EntityUid user, EntityLookupSystem entityLookup, EntityCoordinates location, Direction direction, TurfSystem? turfSystem = null)
         {
             var tileFound = location.GetTileRef();
 

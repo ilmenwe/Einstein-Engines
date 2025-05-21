@@ -1,4 +1,4 @@
-﻿using Content.Client.UserInterface.Fragments;
+using Content.Client.UserInterface.Fragments;
 using Content.Shared.CartridgeLoader;
 using Robust.Client.GameObjects;
 using Robust.Client.UserInterface;
@@ -60,7 +60,6 @@ public abstract class CartridgeLoaderBoundUserInterface : BoundUserInterface
         }
 
         _activeCartridgeUI = ui;
-        _activeUiFragment?.Dispose();
         _activeUiFragment = control;
     }
 

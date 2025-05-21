@@ -887,33 +887,39 @@ public abstract partial class SharedSolutionContainerSystem : EntitySystem
     {
         var msg = new FormattedMessage();
 
-        if (solution.Volume == 0)
+        try
         {
-            msg.AddMarkup(Loc.GetString("scannable-solution-empty-container"));
-            return msg;
-        }
+            if (solution.Volume == 0)
+            {
+                msg.AddMarkupOrThrow(Loc.GetString("scannable-solution-empty-container"));
+                return msg;
+            }
 
-        msg.AddMarkup(Loc.GetString("scannable-solution-main-text"));
+            msg.AddMarkupOrThrow(Loc.GetString("scannable-solution-main-text"));
 
-        var reagentPrototypes = solution.GetReagentPrototypes(PrototypeManager);
+            var reagentPrototypes = solution.GetReagentPrototypes(PrototypeManager);
 
-        // Sort the reagents by amount, descending then alphabetically
-        var sortedReagentPrototypes = reagentPrototypes
-            .OrderByDescending(pair => pair.Value.Value)
-            .ThenBy(pair => pair.Key.LocalizedName);
+            // Sort the reagents by amount, descending then alphabetically
+            var sortedReagentPrototypes = reagentPrototypes
+                .OrderByDescending(pair => pair.Value.Value)
+                .ThenBy(pair => pair.Key.LocalizedName);
 
-        foreach (var (proto, quantity) in sortedReagentPrototypes)
-        {
+            foreach (var (proto, quantity) in sortedReagentPrototypes)
+            {
+                msg.PushNewline();
+                msg.AddMarkupOrThrow(Loc.GetString("scannable-solution-chemical"
+                    , ("type", proto.LocalizedName)
+                    , ("color", proto.SubstanceColor.ToHexNoAlpha())
+                    , ("amount", quantity)));
+            }
+
             msg.PushNewline();
-            msg.AddMarkup(Loc.GetString("scannable-solution-chemical"
-                , ("type", proto.LocalizedName)
-                , ("color", proto.SubstanceColor.ToHexNoAlpha())
-                , ("amount", quantity)));
+            msg.AddMarkupOrThrow(Loc.GetString("scannable-solution-temperature", ("temperature", Math.Round(solution.Temperature))));
         }
-
-        msg.PushNewline();
-        msg.AddMarkup(Loc.GetString("scannable-solution-temperature", ("temperature", Math.Round(solution.Temperature))));
-
+        catch (Exception e)
+        {
+            msg.AddText(e.Message);
+        }
         return msg;
     }
 
@@ -966,7 +972,7 @@ public abstract partial class SharedSolutionContainerSystem : EntitySystem
     public bool EnsureSolution(
         Entity<MetaDataComponent?> entity,
         string name,
-        [NotNullWhen(true)]out Solution? solution,
+        [NotNullWhen(true)] out Solution? solution,
         FixedPoint2 maxVol = default)
     {
         return EnsureSolution(entity, name, maxVol, null, out _, out solution);
@@ -976,7 +982,7 @@ public abstract partial class SharedSolutionContainerSystem : EntitySystem
         Entity<MetaDataComponent?> entity,
         string name,
         out bool existed,
-        [NotNullWhen(true)]out Solution? solution,
+        [NotNullWhen(true)] out Solution? solution,
         FixedPoint2 maxVol = default)
     {
         return EnsureSolution(entity, name, maxVol, null, out existed, out solution);
@@ -1158,13 +1164,13 @@ public abstract partial class SharedSolutionContainerSystem : EntitySystem
         }
         else
         {
-            dissolvedSol.RemoveReagent(reagent,amtChange);
+            dissolvedSol.RemoveReagent(reagent, amtChange);
         }
         UpdateChemicals(dissolvedSolution);
     }
 
     public FixedPoint2 GetReagentQuantityFromConcentration(Entity<SolutionComponent> dissolvedSolution,
-        FixedPoint2 volume,float concentration)
+        FixedPoint2 volume, float concentration)
     {
         var dissolvedSol = dissolvedSolution.Comp.Solution;
         if (volume == 0
@@ -1181,7 +1187,7 @@ public abstract partial class SharedSolutionContainerSystem : EntitySystem
             || dissolvedSol.Volume == 0
             || !dissolvedSol.TryGetReagentQuantity(dissolvedReagent, out var dissolvedVol))
             return 0;
-        return (float)dissolvedVol / volume.Float();
+        return (float) dissolvedVol / volume.Float();
     }
 
     public FixedPoint2 ClampReagentAmountByConcentration(

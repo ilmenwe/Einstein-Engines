@@ -1,4 +1,5 @@
 using Content.Shared.Maps;
+using Content.Shared.Physics;
 using JetBrains.Annotations;
 using Robust.Shared.Map;
 
@@ -12,7 +13,7 @@ public sealed partial class TileNotBlocked : IConstructionCondition
     [DataField("failIfSpace")] private bool _failIfSpace = true;
     [DataField("failIfNotSturdy")] private bool _failIfNotSturdy = true;
 
-    public bool Condition(EntityUid user, EntityCoordinates location, Direction direction)
+    public bool Condition(EntityUid user, EntityLookupSystem entityLookup, EntityCoordinates location, Direction direction, TurfSystem? turfSystem = null)
     {
         var tileRef = location.GetTileRef();
 
@@ -30,8 +31,10 @@ public sealed partial class TileNotBlocked : IConstructionCondition
         {
             return false;
         }
-
-        return !tileRef.Value.IsBlockedTurf(_filterMobs);
+        CollisionGroup mask = _filterMobs
+            ? CollisionGroup.MobMask
+            : CollisionGroup.Impassable;
+        return !turfSystem!.IsTileBlocked(tileRef.Value, mask);
     }
 
     public ConstructionGuideEntry GenerateGuideEntry()

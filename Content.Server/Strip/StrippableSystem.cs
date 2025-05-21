@@ -36,7 +36,6 @@ namespace Content.Server.Strip
         [Dependency] private readonly SharedPopupSystem _popupSystem = default!;
 
         [Dependency] private readonly IAdminLogManager _adminLogger = default!;
-        [Dependency] private readonly ThievingSystem _thieving = default!;
 
         // TODO: ECS popups. Not all of these have ECS equivalents yet.
 

@@ -19,10 +19,6 @@ namespace Content.Server.DeltaV.RoundEnd;
 public sealed class PacifiedRoundEnd : EntitySystem
 {
     [Dependency] private readonly IConfigurationManager _configurationManager = default!;
-    [Dependency] private readonly IPlayerManager _playerManager = default!;
-    [Dependency] private readonly EntityManager _entityManager = default!;
-    [Dependency] private readonly StoreSystem _storeSystem = default!;
-    [Dependency] private readonly PopupSystem _popupSystem = default!;
 
     private bool _enabled;
 

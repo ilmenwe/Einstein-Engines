@@ -44,7 +44,6 @@ public sealed class BarSignBoundUserInterface(EntityUid owner, Enum uiKey) : Bou
         base.Dispose(disposing);
         if (!disposing)
             return;
-        _menu?.Dispose();
     }
 }
 

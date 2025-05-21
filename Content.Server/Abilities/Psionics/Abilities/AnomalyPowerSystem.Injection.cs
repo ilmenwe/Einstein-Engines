@@ -7,7 +7,7 @@ namespace Content.Server.Abilities.Psionics;
 
 public sealed partial class AnomalyPowerSystem
 {
-    private EntityQuery<InjectableSolutionComponent> _injectableQuery;
+    private EntityQuery<InjectableSolutionComponent> _injectableQuery = default!;
     private void DoInjectionAnomalyEffects(EntityUid uid, PsionicComponent component, AnomalyPowerActionEvent args, bool overcharged = false)
     {
         if (args.Injection is null)
@@ -32,7 +32,6 @@ public sealed partial class AnomalyPowerSystem
         var xform = xformQuery.GetComponent(uid);
         var allEnts = _lookup.GetEntitiesInRange<InjectableSolutionComponent>(_xform.GetMapCoordinates(uid), injectRadius)
             .Select(x => x.Owner).ToList();
-
         //for each matching entity found
         foreach (var ent in allEnts)
         {

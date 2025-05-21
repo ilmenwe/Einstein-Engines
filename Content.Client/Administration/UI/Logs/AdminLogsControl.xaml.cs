@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using System.Runtime.InteropServices;
 using Content.Client.Administration.UI.CustomControls;
 using Content.Shared.Administration.Logs;
@@ -515,24 +515,24 @@ public sealed partial class AdminLogsControl : Control
         );
     }
 
-    protected override void Dispose(bool disposing)
-    {
-        base.Dispose(disposing);
+    //protected override void Dispose(bool disposing)
+    //{
+    //    base.Dispose(disposing);
 
-        TypeSearch.OnTextChanged -= TypeSearchChanged;
-        PlayerSearch.OnTextChanged -= PlayerSearchChanged;
-        LogSearch.OnTextChanged -= LogSearchChanged;
+    //    TypeSearch.OnTextChanged -= TypeSearchChanged;
+    //    PlayerSearch.OnTextChanged -= PlayerSearchChanged;
+    //    LogSearch.OnTextChanged -= LogSearchChanged;
 
-        SelectAllTypesButton.OnPressed -= SelectAllTypes;
-        SelectNoTypesButton.OnPressed -= SelectNoTypes;
+    //    SelectAllTypesButton.OnPressed -= SelectAllTypes;
+    //    SelectNoTypesButton.OnPressed -= SelectNoTypes;
 
-        IncludeNonPlayersButton.OnPressed -= IncludeNonPlayers;
-        SelectAllPlayersButton.OnPressed -= SelectAllPlayers;
-        SelectNoPlayersButton.OnPressed -= SelectNoPlayers;
+    //    IncludeNonPlayersButton.OnPressed -= IncludeNonPlayers;
+    //    SelectAllPlayersButton.OnPressed -= SelectAllPlayers;
+    //    SelectNoPlayersButton.OnPressed -= SelectNoPlayers;
 
-        RoundSpinBox.IsValid = null;
-        RoundSpinBox.ValueChanged -= RoundSpinBoxChanged;
+    //    RoundSpinBox.IsValid = null;
+    //    RoundSpinBox.ValueChanged -= RoundSpinBoxChanged;
 
-        ResetRoundButton.OnPressed -= ResetRoundPressed;
-    }
+    //    ResetRoundButton.OnPressed -= ResetRoundPressed;
+    //}
 }

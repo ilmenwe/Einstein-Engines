@@ -46,7 +46,6 @@ public sealed class PsionicsSystem : EntitySystem
     [Dependency] private readonly IPrototypeManager _protoMan = default!;
     [Dependency] private readonly PsionicFamiliarSystem _psionicFamiliar = default!;
     [Dependency] private readonly NPCRetaliationSystem _retaliationSystem = default!;
-    [Dependency] private readonly AlertsSystem _alerts = default!;
 
     private const string BaselineAmplification = "Baseline Amplification";
     private const string BaselineDampening = "Baseline Dampening";

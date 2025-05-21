@@ -54,7 +54,6 @@ namespace Content.Server.GameTicking
 #endif
         [Dependency] private readonly IServerPreferencesManager _prefsManager = default!;
         [Dependency] private readonly IServerDbManager _db = default!;
-        [Dependency] private readonly ArrivalsSystem _arrivals = default!;
         [Dependency] private readonly ChatSystem _chatSystem = default!;
         [Dependency] private readonly DamageableSystem _damageable = default!;
         [Dependency] private readonly MapLoaderSystem _map = default!;

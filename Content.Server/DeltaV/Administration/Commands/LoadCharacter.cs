@@ -21,7 +21,6 @@ namespace Content.Server.DeltaV.Administration.Commands;
 [AdminCommand(AdminFlags.Admin)]
 public sealed class LoadCharacter : IConsoleCommand
 {
-    [Dependency] private readonly IEntitySystemManager _entitySys = default!;
     [Dependency] private readonly IEntityManager _entityManager = default!;
     [Dependency] private readonly IPrototypeManager _prototypeManager = default!;
     [Dependency] private readonly IServerPreferencesManager _prefs = default!;

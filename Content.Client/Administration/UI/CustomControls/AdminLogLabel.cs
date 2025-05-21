@@ -1,4 +1,4 @@
-﻿using Content.Shared.Administration.Logs;
+using Content.Shared.Administration.Logs;
 using Robust.Client.UserInterface;
 using Robust.Client.UserInterface.Controls;
 
@@ -23,11 +23,10 @@ public sealed class AdminLogLabel : RichTextLabel
     {
         Separator.Visible = Visible;
     }
+    //protected override void Dispose(bool disposing)
+    //{
+    //    base.Dispose(disposing);
 
-    protected override void Dispose(bool disposing)
-    {
-        base.Dispose(disposing);
-
-        OnVisibilityChanged -= VisibilityChanged;
-    }
+    //    OnVisibilityChanged -= VisibilityChanged;
+    //}
 }

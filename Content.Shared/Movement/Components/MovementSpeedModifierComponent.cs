@@ -49,7 +49,6 @@ namespace Content.Shared.Movement.Components
             set
             {
                 BaseSprintSpeed = value;
-                Dirty();
             }
         }
 

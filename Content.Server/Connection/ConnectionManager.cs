@@ -282,35 +282,6 @@ namespace Content.Server.Connection
                 return (ConnectionDenyReason.Full, Loc.GetString("soft-player-cap-full"), null);
             }
 
-            // DeltaV - Replace existing softwhitelist implementation
-            if (false)//if (_cfg.GetCVar(CCVars.WhitelistEnabled) && adminData is null)
-            {
-                if (_whitelists is null)
-                {
-                    _sawmill.Error("Whitelist enabled but no whitelists loaded.");
-                    // Misconfigured, deny everyone.
-                    return (ConnectionDenyReason.Whitelist, Loc.GetString("whitelist-misconfigured"), null);
-                }
-
-                foreach (var whitelist in _whitelists)
-                {
-                    if (!IsValid(whitelist, _plyMgr.PlayerCount))
-                    {
-                        // Not valid for current player count.
-                        continue;
-                    }
-
-                    var whitelistStatus = await IsWhitelisted(whitelist, e.UserData, _sawmill);
-                    if (!whitelistStatus.isWhitelisted)
-                    {
-                        // Not whitelisted.
-                        return (ConnectionDenyReason.Whitelist, Loc.GetString("whitelist-fail-prefix", ("msg", whitelistStatus.denyMessage!)), null);
-                    }
-
-                    // Whitelisted, don't check any more.
-                    break;
-                }
-            }
 
             // DeltaV - Soft whitelist improvements
             // TODO: replace this with a whitelist config prototype with a connected whitelisted players condition

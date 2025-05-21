@@ -26,7 +26,6 @@ namespace Content.Server._Imp.Drone
     {
         [Dependency] private readonly BodySystem _bodySystem = default!;
         [Dependency] private readonly PopupSystem _popupSystem = default!;
-        [Dependency] private readonly TagSystem _tagSystem = default!;
         [Dependency] private readonly EntityLookupSystem _lookup = default!;
         [Dependency] private readonly IGameTiming _gameTiming = default!;
         [Dependency] private readonly InnateToolSystem _innateToolSystem = default!;

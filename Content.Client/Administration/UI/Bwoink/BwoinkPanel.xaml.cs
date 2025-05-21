@@ -59,7 +59,7 @@ namespace Content.Client.Administration.UI.Bwoink
                 Unread++;
 
             var formatted = new FormattedMessage(1);
-            formatted.AddMarkup($"[color=gray]{message.SentAt.ToShortTimeString()}[/color] {message.Text}");
+            formatted.AddMarkupPermissive($"[color=gray]{message.SentAt.ToShortTimeString()}[/color] {message.Text}");
             TextOutput.AddMessage(formatted);
             LastMessage = message.SentAt;
         }
@@ -106,11 +106,11 @@ namespace Content.Client.Administration.UI.Bwoink
             UpdateTypingIndicator();
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            base.Dispose(disposing);
+        //protected override void Dispose(bool disposing)
+        //{
+        //    base.Dispose(disposing);
 
-            InputTextChanged = null;
-        }
+        //    InputTextChanged = null;
+        //}
     }
 }

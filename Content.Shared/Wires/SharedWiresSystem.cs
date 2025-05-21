@@ -19,7 +19,6 @@ public abstract class SharedWiresSystem : EntitySystem
     [Dependency] protected readonly SharedAudioSystem Audio = default!;
     [Dependency] protected readonly SharedToolSystem Tool = default!;
     [Dependency] private readonly SharedPopupSystem _popup = default!;
-    [Dependency] private readonly INetManager _netManager = default!;
 
     public override void Initialize()
     {

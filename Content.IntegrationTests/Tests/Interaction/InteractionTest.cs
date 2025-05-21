@@ -26,6 +26,7 @@ using Robust.Shared.Timing;
 using Robust.UnitTesting;
 using Content.Shared.Item.ItemToggle;
 using Robust.Client.State;
+using Content.Shared.Maps;
 
 namespace Content.IntegrationTests.Tests.Interaction;
 
@@ -110,6 +111,8 @@ public abstract partial class InteractionTest
     protected SharedMapSystem MapSystem = default!;
     protected ISawmill SLogger = default!;
     protected SharedUserInterfaceSystem SUiSys = default!;
+    protected TurfSystem TurfSystem = default!;
+
 
     // CLIENT dependencies
     protected IEntityManager CEntMan = default!;
@@ -173,9 +176,10 @@ public abstract partial class InteractionTest
         STestSystem = SEntMan.System<InteractionTestSystem>();
         Stack = SEntMan.System<StackSystem>();
         SLogger = Server.ResolveDependency<ILogManager>().RootSawmill;
-        SUiSys = Client.System<SharedUserInterfaceSystem>();
+        TurfSystem = Server.System<TurfSystem>();
 
         // client dependencies
+        SUiSys = Client.System<SharedUserInterfaceSystem>();
         CEntMan = Client.ResolveDependency<IEntityManager>();
         UiMan = Client.ResolveDependency<IUserInterfaceManager>();
         CTiming = Client.ResolveDependency<IGameTiming>();

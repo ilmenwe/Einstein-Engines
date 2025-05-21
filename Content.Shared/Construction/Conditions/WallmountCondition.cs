@@ -1,5 +1,6 @@
 using System.Linq;
 using System.Numerics;
+using Content.Shared.Maps;
 using Content.Shared.Physics;
 using Content.Shared.Tag;
 using JetBrains.Annotations;
@@ -14,19 +15,19 @@ namespace Content.Shared.Construction.Conditions
     [DataDefinition]
     public sealed partial class WallmountCondition : IConstructionCondition
     {
-        public bool Condition(EntityUid user, EntityCoordinates location, Direction direction)
+        public bool Condition(EntityUid user, EntityLookupSystem entityLookup, EntityCoordinates location, Direction direction, TurfSystem? turfSystem = null)
         {
             var entManager = IoCManager.Resolve<IEntityManager>();
 
             // get blueprint and user position
             var transformSystem = entManager.System<SharedTransformSystem>();
-            var userWorldPosition = entManager.GetComponent<TransformComponent>(user).WorldPosition;
-            var objWorldPosition = location.ToMap(entManager, transformSystem).Position;
+            var userWorldPosition = transformSystem.GetWorldPosition(user);
+            var objWorldPosition = transformSystem.ToMapCoordinates(location).Position;
 
             // find direction from user to blueprint
             var userToObject = (objWorldPosition - userWorldPosition);
             // get direction of the grid being placed on as an offset.
-            var gridRotation = entManager.GetComponent<TransformComponent>(location.EntityId).WorldRotation;
+            var gridRotation = transformSystem.GetWorldPositionRotation(location.EntityId).WorldRotation;
             var directionWithOffset = gridRotation.RotateVec(direction.ToVec());
 
             // dot product will be positive if user direction and blueprint are co-directed

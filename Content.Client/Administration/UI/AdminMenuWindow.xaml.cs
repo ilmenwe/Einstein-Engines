@@ -8,7 +8,6 @@ namespace Content.Client.Administration.UI;
 [GenerateTypedNameReferences]
 public sealed partial class AdminMenuWindow : DefaultWindow
 {
-    public event Action? OnDisposed;
     [Dependency] private readonly ILocalizationManager _localization = default!;
     public AdminMenuWindow()
     {
@@ -31,18 +30,12 @@ public sealed partial class AdminMenuWindow : DefaultWindow
         MasterTabContainer.OnTabChanged += OnTabChanged;
     }
 
+
     private void OnTabChanged(int tabIndex)
     {
-        var tabEnum = (TabIndex)tabIndex;
+        var tabEnum = (TabIndex) tabIndex;
         if (tabEnum == TabIndex.Objects)
             ObjectsTabControl.RefreshObjectList();
-    }
-
-    protected override void Dispose(bool disposing)
-    {
-        OnDisposed?.Invoke();
-        base.Dispose(disposing);
-        OnDisposed = null;
     }
 
     private enum TabIndex

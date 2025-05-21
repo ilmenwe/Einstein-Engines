@@ -1,4 +1,5 @@
-﻿using Content.Shared.Construction.EntitySystems;
+using Content.Shared.Construction.EntitySystems;
+using Content.Shared.Maps;
 using JetBrains.Annotations;
 using Robust.Shared.Map;
 
@@ -13,7 +14,7 @@ namespace Content.Shared.Construction.Conditions;
 public sealed partial class NoUnstackableInTile : IConstructionCondition
 {
     public const string GuidebookString = "construction-step-condition-no-unstackable-in-tile";
-    public bool Condition(EntityUid user, EntityCoordinates location, Direction direction)
+    public bool Condition(EntityUid user, EntityLookupSystem entityLookup, EntityCoordinates location, Direction direction, TurfSystem? turfSystem = null)
     {
         var sysMan = IoCManager.Resolve<IEntitySystemManager>();
         var anchorable = sysMan.GetEntitySystem<AnchorableSystem>();

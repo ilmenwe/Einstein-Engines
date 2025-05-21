@@ -1,4 +1,4 @@
-﻿using Content.Shared.Damage;
+using Content.Shared.Damage;
 using Content.Shared.Examine;
 using Content.Shared.Inventory;
 using Content.Shared.Silicons.Borgs;
@@ -53,31 +53,35 @@ public abstract class SharedArmorSystem : EntitySystem
     private FormattedMessage GetArmorExamine(DamageModifierSet armorModifiers)
     {
         var msg = new FormattedMessage();
-
-        msg.AddMarkup(Loc.GetString("armor-examine"));
-
-        foreach (var coefficientArmor in armorModifiers.Coefficients)
+        try
         {
-            msg.PushNewline();
+            msg.AddMarkupOrThrow(Loc.GetString("armor-examine"));
+            foreach (var coefficientArmor in armorModifiers.Coefficients)
+            {
+                msg.PushNewline();
 
-            var armorType = Loc.GetString("armor-damage-type-" + coefficientArmor.Key.ToLower());
-            msg.AddMarkup(Loc.GetString("armor-coefficient-value",
-                ("type", armorType),
-                ("value", MathF.Round((1f - coefficientArmor.Value) * 100, 1))
-            ));
+                var armorType = Loc.GetString("armor-damage-type-" + coefficientArmor.Key.ToLower());
+                msg.AddMarkupOrThrow(Loc.GetString("armor-coefficient-value",
+                    ("type", armorType),
+                    ("value", MathF.Round((1f - coefficientArmor.Value) * 100, 1))
+                ));
+            }
+
+            foreach (var flatArmor in armorModifiers.FlatReduction)
+            {
+                msg.PushNewline();
+
+                var armorType = Loc.GetString("armor-damage-type-" + flatArmor.Key.ToLower());
+                msg.AddMarkupOrThrow(Loc.GetString("armor-reduction-value",
+                    ("type", armorType),
+                    ("value", flatArmor.Value)
+                ));
+            }
         }
-
-        foreach (var flatArmor in armorModifiers.FlatReduction)
+        catch (Exception e)
         {
-            msg.PushNewline();
-
-            var armorType = Loc.GetString("armor-damage-type-" + flatArmor.Key.ToLower());
-            msg.AddMarkup(Loc.GetString("armor-reduction-value",
-                ("type", armorType),
-                ("value", flatArmor.Value)
-            ));
+            msg.AddText(e.Message);
         }
-
         return msg;
     }
 }

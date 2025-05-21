@@ -21,7 +21,6 @@ public abstract class SharedRoleSystem : EntitySystem
 {
     [Dependency] private readonly ISharedAdminLogManager _adminLogger = default!;
     [Dependency] private readonly SharedAudioSystem _audio = default!;
-    [Dependency] private readonly IConfigurationManager _cfg = default!;
     [Dependency] private readonly IEntityManager _entityManager = default!;
     [Dependency] private readonly SharedMindSystem _minds = default!;
     [Dependency] private readonly IPrototypeManager _prototypes = default!;

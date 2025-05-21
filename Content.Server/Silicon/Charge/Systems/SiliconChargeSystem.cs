@@ -27,7 +27,6 @@ public sealed class SiliconChargeSystem : EntitySystem
 {
     [Dependency] private readonly IRobustRandom _random = default!;
     [Dependency] private readonly MobStateSystem _mobState = default!;
-    [Dependency] private readonly FlammableSystem _flammable = default!;
     [Dependency] private readonly PopupSystem _popup = default!;
     [Dependency] private readonly MovementSpeedModifierSystem _moveMod = default!;
     [Dependency] private readonly IGameTiming _timing = default!;

@@ -14,7 +14,6 @@ public sealed class DamageMarkerSystem : SharedDamageMarkerSystem
     [Dependency] private readonly PressureEfficiencyChangeSystem _pressure = default!;
 //
 // \    [Dependency] private readonly BackStabSystem _backstab = default!;
-    [Dependency] private readonly SharedStunSystem _stun = default!;
     [Dependency] private readonly DamageableSystem _damageable = default!;
     public override void Initialize()
     {

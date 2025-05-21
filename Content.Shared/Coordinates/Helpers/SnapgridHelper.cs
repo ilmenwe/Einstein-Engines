@@ -10,16 +10,18 @@ namespace Content.Shared.Coordinates.Helpers
         {
             IoCManager.Resolve(ref entMan, ref mapManager);
 
-            var gridId = coordinates.GetGridUid(entMan);
+            var transformSystem = entMan.System<SharedTransformSystem>();
+            var gridId = transformSystem?.GetGrid(coordinates);
 
             if (gridId == null)
             {
-                var xformSys = entMan.System<SharedTransformSystem>();
-                var mapPos = coordinates.ToMap(entMan, xformSys);
-                var mapX = (int)Math.Floor(mapPos.X) + 0.5f;
-                var mapY = (int)Math.Floor(mapPos.Y) + 0.5f;
-                mapPos = new MapCoordinates(new Vector2(mapX, mapY), mapPos.MapId);
-                return EntityCoordinates.FromMap(coordinates.EntityId, mapPos, xformSys);
+
+                var mapPos = transformSystem?.ToMapCoordinates(coordinates);
+                var mapX = (int)Math.Floor(mapPos!.Value.X) + 0.5f;
+                var mapY = (int)Math.Floor(mapPos!.Value.Y) + 0.5f;
+                mapPos = new MapCoordinates(new Vector2(mapX, mapY), mapPos!.Value.MapId);
+                ;
+                return new(coordinates.EntityId,transformSystem!.GetMapCoordinates(coordinates.EntityId).Position);
             }
 
             var grid = entMan.GetComponent<MapGridComponent>(gridId.Value);

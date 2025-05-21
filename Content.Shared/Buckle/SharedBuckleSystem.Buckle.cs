@@ -178,7 +178,7 @@ public abstract partial class SharedBuckleSystem
             Dirty(buckle.Comp.BuckledTo.Value, old);
         }
 
-        if (strap is {} strapEnt && Resolve(strapEnt.Owner, ref strapEnt.Comp))
+        if (strap is { } strapEnt && Resolve(strapEnt.Owner, ref strapEnt.Comp))
         {
             strapEnt.Comp.BuckledEntities.Add(buckle);
             Dirty(strapEnt);
@@ -353,7 +353,7 @@ public abstract partial class SharedBuckleSystem
         var xform = Transform(buckle);
         var coords = new EntityCoordinates(strap, strap.Comp.BuckleOffset);
 
-        _transform.SetCoordinates(buckle, xform, coords, rotation: Angle.Zero);
+        _transformSystem.SetCoordinates(buckle, xform, coords, rotation: Angle.Zero);
         _joints.SetRelay(buckle, strap);
 
         switch (strap.Comp.Position)
@@ -444,16 +444,16 @@ public abstract partial class SharedBuckleSystem
 
         if (buckleXform.ParentUid == strap.Owner && !Terminating(buckleXform.ParentUid))
         {
-            _transform.PlaceNextTo((buckle, buckleXform), (strap.Owner, oldBuckledXform));
+            _transformSystem.PlaceNextTo((buckle, buckleXform), (strap.Owner, oldBuckledXform));
             buckleXform.ActivelyLerping = false;
 
-            var oldBuckledToWorldRot = _transform.GetWorldRotation(strap);
-            _transform.SetWorldRotationNoLerp((buckle, buckleXform), oldBuckledToWorldRot);
+            var oldBuckledToWorldRot = _transformSystem.GetWorldRotation(strap);
+            _transformSystem.SetWorldRotationNoLerp((buckle, buckleXform), oldBuckledToWorldRot);
 
             // TODO: This is doing 4 moveevents this is why I left the warning in, if you're going to remove it make it only do 1 moveevent.
             if (strap.Comp.BuckleOffset != Vector2.Zero)
             {
-                buckleXform.Coordinates = oldBuckledXform.Coordinates.Offset(strap.Comp.BuckleOffset);
+                _transformSystem.SetCoordinates(buckleXform.ParentUid, oldBuckledXform.Coordinates.Offset(strap.Comp.BuckleOffset));
             }
         }
 

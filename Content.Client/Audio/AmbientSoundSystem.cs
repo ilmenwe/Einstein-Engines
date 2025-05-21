@@ -165,7 +165,7 @@ public sealed class AmbientSoundSystem : SharedAmbientSoundSystem
         if (_gameTiming.CurTime < _targetTime)
             return;
 
-        _targetTime = _gameTiming.CurTime+TimeSpan.FromSeconds(_cooldown);
+        _targetTime = _gameTiming.CurTime + TimeSpan.FromSeconds(_cooldown);
 
         var player = _playerManager.LocalEntity;
         if (!EntityManager.TryGetComponent(player, out TransformComponent? xform))
@@ -244,14 +244,14 @@ public sealed class AmbientSoundSystem : SharedAmbientSoundSystem
         // Remove out-of-range ambiences
         foreach (var (comp, sound) in _playingSounds)
         {
-            var entity = comp.Owner;
+            var entity = sound.Stream;
 
             if (comp.Enabled &&
                 // Don't keep playing sounds that have changed since.
                 sound.Sound == comp.Sound &&
                 query.TryGetComponent(entity, out var xform) &&
                 xform.MapID == playerXform.MapID &&
-                !metaQuery.GetComponent(entity).EntityPaused)
+                !metaQuery.GetComponent(entity.Value).EntityPaused)
             {
                 // TODO: This is just trydistance for coordinates.
                 var distance = (xform.ParentUid == playerXform.ParentUid)

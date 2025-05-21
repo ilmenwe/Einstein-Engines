@@ -88,22 +88,6 @@ namespace Content.Client.Administration.UI.Tabs.PlayerTab
             RefreshPlayerList(_players);
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            base.Dispose(disposing);
-
-            if (disposing)
-            {
-                _adminSystem.PlayerListChanged -= RefreshPlayerList;
-                _adminSystem.OverlayEnabled -= OverlayEnabled;
-                _adminSystem.OverlayDisabled -= OverlayDisabled;
-
-                OverlayButton.OnPressed -= OverlayButtonPressed;
-
-                ListHeader.OnHeaderClicked -= HeaderClicked;
-            }
-        }
-
         #region ListContainer
 
         private void RefreshPlayerList(IReadOnlyList<PlayerInfo> players)
@@ -125,7 +109,7 @@ namespace Content.Client.Administration.UI.Tabs.PlayerTab
 
         private void GenerateButton(ListData data, ListContainerButton button)
         {
-            if (data is not PlayerListData { Info: var player})
+            if (data is not PlayerListData { Info: var player })
                 return;
 
             var entry = new PlayerTabEntry(player, new StyleBoxFlat(button.Index % 2 == 0 ? _altColor : _defaultColor));
@@ -143,7 +127,7 @@ namespace Content.Client.Administration.UI.Tabs.PlayerTab
         /// <returns>Whether <paramref name="filter"/> is contained in <paramref name="listData"/>.FilteringString.</returns>
         private bool DataFilterCondition(string filter, ListData listData)
         {
-            if (listData is not PlayerListData {Info: var info, FilteringString: var playerString})
+            if (listData is not PlayerListData { Info: var info, FilteringString: var playerString })
                 return false;
 
             if (!_showDisconnected && !info.Connected)
@@ -197,7 +181,7 @@ namespace Content.Client.Administration.UI.Tabs.PlayerTab
                 Header.Character => Compare(x.CharacterName, y.CharacterName),
                 Header.Job => Compare(x.StartingJob, y.StartingJob),
                 Header.Antagonist => x.Antag.CompareTo(y.Antag),
-                Header.RoleType => Compare(x.RoleProto.Name , y.RoleProto.Name),
+                Header.RoleType => Compare(x.RoleProto.Name, y.RoleProto.Name),
                 Header.Playtime => TimeSpan.Compare(x.OverallPlaytime ?? default, y.OverallPlaytime ?? default),
                 _ => 1
             };

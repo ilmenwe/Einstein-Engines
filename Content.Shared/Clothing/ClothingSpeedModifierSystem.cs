@@ -14,13 +14,10 @@ namespace Content.Shared.Clothing;
 
 public sealed class ClothingSpeedModifierSystem : EntitySystem
 {
-    [Dependency] private readonly SharedAppearanceSystem _appearance = default!;
-    [Dependency] private readonly ClothingSpeedModifierSystem _clothingSpeedModifier = default!;
     [Dependency] private readonly SharedContainerSystem _container = default!;
     [Dependency] private readonly ExamineSystemShared _examine = default!;
     [Dependency] private readonly MovementSpeedModifierSystem _movementSpeed = default!;
     [Dependency] private readonly ItemToggleSystem _toggle = default!;
-    [Dependency] private readonly SharedPowerCellSystem _powerCell = default!;
 
     public override void Initialize()
     {
@@ -78,35 +75,42 @@ public sealed class ClothingSpeedModifierSystem : EntitySystem
 
         var msg = new FormattedMessage();
 
-        if (walkModifierPercentage == sprintModifierPercentage)
+        try
         {
-            if (walkModifierPercentage < 0.0f)
-                msg.AddMarkup(Loc.GetString("clothing-speed-increase-equal-examine", ("walkSpeed", MathF.Abs(walkModifierPercentage)), ("runSpeed", MathF.Abs(sprintModifierPercentage))));
+            if (walkModifierPercentage == sprintModifierPercentage)
+            {
+                if (walkModifierPercentage < 0.0f)
+                    msg.AddMarkupOrThrow(Loc.GetString("clothing-speed-increase-equal-examine", ("walkSpeed", MathF.Abs(walkModifierPercentage)), ("runSpeed", MathF.Abs(sprintModifierPercentage))));
+                else
+                    msg.AddMarkupOrThrow(Loc.GetString("clothing-speed-decrease-equal-examine", ("walkSpeed", walkModifierPercentage), ("runSpeed", sprintModifierPercentage)));
+            }
             else
-                msg.AddMarkup(Loc.GetString("clothing-speed-decrease-equal-examine", ("walkSpeed", walkModifierPercentage), ("runSpeed", sprintModifierPercentage)));
+            {
+                if (sprintModifierPercentage < 0.0f)
+                {
+                    msg.AddMarkupOrThrow(Loc.GetString("clothing-speed-increase-run-examine", ("runSpeed", MathF.Abs(sprintModifierPercentage))));
+                }
+                else if (sprintModifierPercentage > 0.0f)
+                {
+                    msg.AddMarkupOrThrow(Loc.GetString("clothing-speed-decrease-run-examine", ("runSpeed", sprintModifierPercentage)));
+                }
+                if (walkModifierPercentage != 0.0f && sprintModifierPercentage != 0.0f)
+                {
+                    msg.PushNewline();
+                }
+                if (walkModifierPercentage < 0.0f)
+                {
+                    msg.AddMarkupOrThrow(Loc.GetString("clothing-speed-increase-walk-examine", ("walkSpeed", MathF.Abs(walkModifierPercentage))));
+                }
+                else if (walkModifierPercentage > 0.0f)
+                {
+                    msg.AddMarkupOrThrow(Loc.GetString("clothing-speed-decrease-walk-examine", ("walkSpeed", walkModifierPercentage)));
+                }
+            }
         }
-        else
+        catch (Exception e)
         {
-            if (sprintModifierPercentage < 0.0f)
-            {
-                msg.AddMarkup(Loc.GetString("clothing-speed-increase-run-examine", ("runSpeed", MathF.Abs(sprintModifierPercentage))));
-            }
-            else if (sprintModifierPercentage > 0.0f)
-            {
-                msg.AddMarkup(Loc.GetString("clothing-speed-decrease-run-examine", ("runSpeed", sprintModifierPercentage)));
-            }
-            if (walkModifierPercentage != 0.0f && sprintModifierPercentage != 0.0f)
-            {
-                msg.PushNewline();
-            }
-            if (walkModifierPercentage < 0.0f)
-            {
-                msg.AddMarkup(Loc.GetString("clothing-speed-increase-walk-examine", ("walkSpeed", MathF.Abs(walkModifierPercentage))));
-            }
-            else if (walkModifierPercentage > 0.0f)
-            {
-                msg.AddMarkup(Loc.GetString("clothing-speed-decrease-walk-examine", ("walkSpeed", walkModifierPercentage)));
-            }
+            msg.AddText(e.Message);
         }
 
         _examine.AddDetailedExamineVerb(args, component, msg, Loc.GetString("clothing-speed-examinable-verb-text"), "/Textures/Interface/VerbIcons/outfit.svg.192dpi.png", Loc.GetString("clothing-speed-examinable-verb-message"));

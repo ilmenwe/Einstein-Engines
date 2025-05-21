@@ -14,7 +14,6 @@ namespace Content.Client.Administration.UI.Tabs.ObjectsTab;
 public sealed partial class ObjectsTab : Control
 {
     [Dependency] private readonly IEntityManager _entityManager = default!;
-    [Dependency] private readonly IGameTiming _timing = default!;
 
     private readonly Color _altColor = Color.FromHex("#292B38");
     private readonly Color _defaultColor = Color.FromHex("#2F2F3B");
@@ -61,6 +60,8 @@ public sealed partial class ObjectsTab : Control
 
     private void RefreshObjectList(ObjectsTabSelection selection)
     {
+        AllEntityQueryEnumerator<MapComponent, MetaDataComponent> gridQuery = new();
+        AllEntityQueryEnumerator<MapGridComponent, MetaDataComponent> mapGridQuery = new();
         var entities = new List<(string Name, NetEntity Entity)>();
         switch (selection)
         {
@@ -68,25 +69,20 @@ public sealed partial class ObjectsTab : Control
                 entities.AddRange(_entityManager.EntitySysManager.GetEntitySystem<StationSystem>().Stations);
                 break;
             case ObjectsTabSelection.Grids:
-            {
-                var query = _entityManager.AllEntityQueryEnumerator<MapGridComponent, MetaDataComponent>();
-                while (query.MoveNext(out var uid, out _, out var metadata))
+                mapGridQuery = _entityManager.AllEntityQueryEnumerator<MapGridComponent, MetaDataComponent>();
+                while (mapGridQuery.MoveNext(out var uid, out _, out var metadata))
                 {
                     entities.Add((metadata.EntityName, _entityManager.GetNetEntity(uid)));
                 }
-
                 break;
-            }
             case ObjectsTabSelection.Maps:
-            {
-                var query = _entityManager.AllEntityQueryEnumerator<MapComponent, MetaDataComponent>();
-                while (query.MoveNext(out var uid, out _, out var metadata))
+                gridQuery = _entityManager.AllEntityQueryEnumerator<MapComponent, MetaDataComponent>();
+                while (gridQuery.MoveNext(out var uid, out _, out var metadata))
                 {
                     entities.Add((metadata.EntityName, _entityManager.GetNetEntity(uid)));
                 }
 
                 break;
-            }
             default:
                 throw new ArgumentOutOfRangeException(nameof(selection), selection, null);
         }

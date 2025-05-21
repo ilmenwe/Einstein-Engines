@@ -16,15 +16,11 @@ namespace Content.Server.NPC.HTN.PrimitiveTasks.Operators.Specific;
 public sealed partial class PlantbotServiceOperator : HTNOperator
 {
     [Dependency] private readonly IEntityManager _entMan = default!;
-    [Dependency] private readonly IPrototypeManager _prototypeManager = default!;
 
     private ChatSystem _chat = default!;
     private SharedAudioSystem _audio = default!;
     private SharedInteractionSystem _interaction = default!;
-    private SharedPopupSystem _popup = default!;
     private PlantHolderSystem _plantHolderSystem = default!;
-    private DamageableSystem _damageableSystem = default!;
-    private TagSystem _tagSystem = default!;
 
     public const float RequiredWaterLevelToService = 80f;
     public const float RequiredWeedsAmountToWeed = 1f;
@@ -45,7 +41,6 @@ public sealed partial class PlantbotServiceOperator : HTNOperator
         _chat = sysManager.GetEntitySystem<ChatSystem>();
         _audio = sysManager.GetEntitySystem<SharedAudioSystem>();
         _interaction = sysManager.GetEntitySystem<SharedInteractionSystem>();
-        _popup = sysManager.GetEntitySystem<SharedPopupSystem>();
         _plantHolderSystem = sysManager.GetEntitySystem<PlantHolderSystem>();
     }
 

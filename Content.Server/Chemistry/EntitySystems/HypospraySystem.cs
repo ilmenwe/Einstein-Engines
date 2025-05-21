@@ -29,7 +29,6 @@ public sealed class HypospraySystem : SharedHypospraySystem
     [Dependency] private readonly SharedDoAfterSystem _doAfter = default!;
     [Dependency] private readonly AtmosphereSystem _atmosphere = default!;
     [Dependency] private readonly AudioSystem _audio = default!;
-    [Dependency] private readonly InteractionSystem _interaction = default!;
 
     public override void Initialize()
     {

@@ -1,4 +1,4 @@
-﻿using Content.Client.Administration.Managers;
+using Content.Client.Administration.Managers;
 using Content.Client.Administration.Systems;
 using Content.Client.Administration.UI;
 using Content.Client.Administration.UI.Tabs.ObjectsTab;
@@ -135,7 +135,6 @@ public sealed class AdminUIController : UIController,
         _window.ObjectsTabControl.OnEntryKeyBindDown += ObjectsTabEntryKeyBindDown;
         _window.OnOpen += OnWindowOpen;
         _window.OnClose += OnWindowClosed;
-        _window.OnDisposed += OnWindowDisposed;
     }
 
     public void UnloadButton()
@@ -180,7 +179,6 @@ public sealed class AdminUIController : UIController,
         _window.ObjectsTabControl.OnEntryKeyBindDown -= ObjectsTabEntryKeyBindDown;
         _window.OnOpen -= OnWindowOpen;
         _window.OnClose -= OnWindowClosed;
-        _window.OnDisposed -= OnWindowDisposed;
         _window = null;
     }
 

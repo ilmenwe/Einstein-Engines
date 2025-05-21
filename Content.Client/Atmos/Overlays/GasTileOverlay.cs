@@ -21,6 +21,8 @@ namespace Content.Client.Atmos.Overlays
     {
         private readonly IEntityManager _entManager;
         private readonly IMapManager _mapManager;
+        private readonly SharedMapSystem _mapSystem;
+        private readonly TransformSystem _transformSystem;
 
         public override OverlaySpace Space => OverlaySpace.WorldSpaceEntities | OverlaySpace.WorldSpaceBelowWorld;
         private readonly ShaderInstance _shader;
@@ -50,6 +52,8 @@ namespace Content.Client.Atmos.Overlays
         {
             _entManager = entManager;
             _mapManager = IoCManager.Resolve<IMapManager>();
+            _mapSystem = IoCManager.Resolve<SharedMapSystem>();
+            _transformSystem = IoCManager.Resolve<TransformSystem>();
             _shader = protoMan.Index<ShaderPrototype>("unshaded").Instance();
             ZIndex = GasOverlayZIndex;
 
@@ -66,9 +70,9 @@ namespace Content.Client.Atmos.Overlays
                 SpriteSpecifier overlay;
 
                 if (!string.IsNullOrEmpty(gasPrototype.GasOverlaySprite) && !string.IsNullOrEmpty(gasPrototype.GasOverlayState))
-                    overlay = new SpriteSpecifier.Rsi(new (gasPrototype.GasOverlaySprite), gasPrototype.GasOverlayState);
+                    overlay = new SpriteSpecifier.Rsi(new(gasPrototype.GasOverlaySprite), gasPrototype.GasOverlayState);
                 else if (!string.IsNullOrEmpty(gasPrototype.GasOverlayTexture))
-                    overlay = new SpriteSpecifier.Texture(new (gasPrototype.GasOverlayTexture));
+                    overlay = new SpriteSpecifier.Texture(new(gasPrototype.GasOverlayTexture));
                 else
                     continue;
 
@@ -160,17 +164,22 @@ namespace Content.Client.Atmos.Overlays
                 overlayQuery,
                 xformQuery);
 
-            var mapUid = _mapManager.GetMapEntityId(args.MapId);
+            if (_mapSystem.TryGetMap(args.MapId, out var mapUid))
+            {
 
-            if (_entManager.TryGetComponent<MapAtmosphereComponent>(mapUid, out var atmos))
-                DrawMapOverlay(drawHandle, args, mapUid, atmos);
+                if (_entManager.TryGetComponent<MapAtmosphereComponent>(mapUid, out var atmos))
+                {
+                    DrawMapOverlay(drawHandle, args, mapUid.Value, atmos);
+
+                }
+            }
 
             if (args.Space != OverlaySpace.WorldSpaceEntities)
                 return;
 
             // TODO: WorldBounds callback.
             _mapManager.FindGridsIntersecting(args.MapId, args.WorldAABB, ref gridState,
-                static (EntityUid uid, MapGridComponent grid,
+                (EntityUid uid, MapGridComponent grid,
                     ref (Box2Rotated WorldBounds,
                         DrawingHandleWorld drawHandle,
                         int gasCount,
@@ -184,13 +193,12 @@ namespace Content.Client.Atmos.Overlays
                 {
                     if (!state.overlayQuery.TryGetComponent(uid, out var comp) ||
                         !state.xformQuery.TryGetComponent(uid, out var gridXform))
-                        {
-                            return true;
-                        }
-
-                    var (_, _, worldMatrix, invMatrix) = gridXform.GetWorldPositionRotationMatrixWithInv();
+                    {
+                        return true;
+                    }
+                    (Vector2 _, Angle _, Matrix3x2 worldMatrix, Matrix3x2 invWorldMatrix) = _transformSystem.GetWorldPositionRotationMatrixWithInv(gridXform.ParentUid);
                     state.drawHandle.SetTransform(worldMatrix);
-                    var floatBounds = invMatrix.TransformBox(state.WorldBounds).Enlarged(grid.TileSize);
+                    var floatBounds = invWorldMatrix.TransformBox(state.WorldBounds).Enlarged(grid.TileSize);
                     var localBounds = new Box2i(
                         (int) MathF.Floor(floatBounds.Left),
                         (int) MathF.Floor(floatBounds.Bottom),

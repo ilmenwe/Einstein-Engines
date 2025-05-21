@@ -64,13 +64,13 @@ public sealed partial class NoteEdit : FancyWindow
             NoteType = note.NoteType;
             TypeOption.AddItem(Loc.GetString("admin-note-editor-type-server-ban"), (int) NoteType.ServerBan);
             TypeOption.AddItem(Loc.GetString("admin-note-editor-type-role-ban"), (int) NoteType.RoleBan);
-            TypeOption.SelectId((int)NoteType);
+            TypeOption.SelectId((int) NoteType);
             TypeOption.Disabled = true;
 
             NoteTextEdit.InsertAtCursor(note.Message);
 
             NoteSeverity = note.NoteSeverity ?? Shared.Database.NoteSeverity.Minor;
-            SeverityOption.SelectId((int)NoteSeverity);
+            SeverityOption.SelectId((int) NoteSeverity);
             SeverityOption.Disabled = note.NoteType is not (NoteType.Note or NoteType.ServerBan or NoteType.RoleBan);
 
             IsSecret = note.Secret;
@@ -274,21 +274,5 @@ public sealed partial class NoteEdit : FancyWindow
         return true;
     }
 
-    protected override void Dispose(bool disposing)
-    {
-        base.Dispose(disposing);
 
-        if (!disposing)
-        {
-            return;
-        }
-
-        PermanentCheckBox.OnPressed -= OnPermanentPressed;
-        SecretCheckBox.OnPressed -= OnSecretPressed;
-        SubmitButton.OnPressed -= OnSubmitButtonPressed;
-        SubmitButton.OnMouseEntered -= OnSubmitButtonMouseEntered;
-        SubmitButton.OnMouseExited -= OnSubmitButtonMouseExited;
-
-        SubmitPressed = null;
-    }
 }

@@ -6,6 +6,7 @@ using Content.Shared.Construction.Steps;
 using Content.Shared.Examine;
 using Content.Shared.Input;
 using Content.Shared.Interaction;
+using Content.Shared.Maps;
 using Content.Shared.Wall;
 using JetBrains.Annotations;
 using Robust.Client.GameObjects;
@@ -29,6 +30,9 @@ namespace Content.Client.Construction
         [Dependency] private readonly SharedInteractionSystem _interactionSystem = default!;
         [Dependency] private readonly SharedTransformSystem _transformSystem = default!;
         [Dependency] private readonly PopupSystem _popupSystem = default!;
+        [Dependency] private readonly EntityLookupSystem _lookupSystem = default!;
+        [Dependency] private readonly TurfSystem _turfSystem = default!;
+
 
         private readonly Dictionary<int, EntityUid> _ghosts = new();
         private readonly Dictionary<string, ConstructionGuide> _guideCache = new();
@@ -38,6 +42,7 @@ namespace Content.Client.Construction
         /// <inheritdoc />
         public override void Initialize()
         {
+            
             base.Initialize();
 
             UpdatesOutsidePrediction = true;
@@ -230,7 +235,7 @@ namespace Content.Client.Construction
         {
             foreach (var condition in prototype.Conditions)
             {
-                if (!condition.Condition(user, loc, dir))
+                if (!condition.Condition(user, _lookupSystem, loc, dir, _turfSystem))
                 {
                     if (showPopup)
                     {

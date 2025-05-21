@@ -23,12 +23,21 @@ public sealed class IdExaminableSystem : EntitySystem
         var detailsRange = _examineSystem.IsInDetailsRange(args.User, uid);
         var info = GetMessage(uid);
 
+        var markup = new FormattedMessage();
+
         var verb = new ExamineVerb()
         {
             Act = () =>
             {
-                var markup = FormattedMessage.FromMarkup(info);
-                _examineSystem.SendExamineTooltip(args.User, uid, markup, false, false);
+                try
+                {
+                    var markup = FormattedMessage.FromMarkupOrThrow(info);
+                    _examineSystem.SendExamineTooltip(args.User, uid, markup, false, false);
+                }
+                catch (Exception e)
+                {
+                    markup.AddText(e.Message);
+                }
             },
             Text = Loc.GetString("id-examinable-component-verb-text"),
             Category = VerbCategory.Examine,

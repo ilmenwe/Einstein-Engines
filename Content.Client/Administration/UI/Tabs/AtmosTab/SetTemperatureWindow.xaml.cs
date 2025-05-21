@@ -24,11 +24,11 @@ namespace Content.Client.Administration.UI.Tabs.AtmosTab
             var entManager = IoCManager.Resolve<IEntityManager>();
             var playerManager = IoCManager.Resolve<IPlayerManager>();
 
-            var gridQuery = entManager.AllEntityQueryEnumerator<MapGridComponent>();
+            var gridQuery = entManager.AllEntityQueryEnumerator<MapGridComponent,TransformComponent>();
             _data ??= new List<NetEntity>();
             _data.Clear();
 
-            while (gridQuery.MoveNext(out var uid, out _))
+            while (gridQuery.MoveNext(out var uid, out _, out _))
             {
                 var player = playerManager.LocalEntity;
                 var playerGrid = entManager.GetComponentOrNull<TransformComponent>(player)?.GridUid;

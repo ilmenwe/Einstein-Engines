@@ -2,7 +2,6 @@ using Content.Shared._Goobstation.MartialArts.Events; // Goobstation - Martial A
 using Content.Shared.Contests; // Goobstation - Grab Intent
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics; // Goobstation - Grab Intent
-using Content.Shared._Goobstation.Grab;
 using Content.Shared._Goobstation.MartialArts.Components; // Goobstation - Grab Intent
 using Content.Shared._White.Grab; // Goobstation
 using Content.Shared.ActionBlocker;
@@ -11,7 +10,6 @@ using Content.Shared.Alert;
 using Content.Shared.Buckle.Components;
 using Content.Shared.CombatMode;
 using Content.Shared.CombatMode.Pacification; // Goobstation
-using Content.Shared.Cuffs.Components; // Goobstation
 using Content.Shared.Damage;
 using Content.Shared.Damage.Components; // Goobstation
 using Content.Shared.Damage.Systems; // Goobstation
@@ -24,17 +22,13 @@ using Content.Shared.Input;
 using Content.Shared.Interaction;
 using Content.Shared.Inventory.VirtualItem; // Goobstation
 using Content.Shared.Item;
-using Content.Shared.Mobs;
 using Content.Shared.Mobs.Components; // Goobstation
-using Content.Shared.Mobs.Systems;
 using Content.Shared.Popups;
 using Content.Shared.IdentityManagement;
-using Content.Shared.Movement.Components;
 using Content.Shared.Movement.Events;
 using Content.Shared.Movement.Pulling.Components;
 using Content.Shared.Movement.Pulling.Events;
 using Content.Shared.Movement.Systems;
-using Content.Shared.Projectiles;
 using Content.Shared.Pulling.Events;
 using Content.Shared.Speech; // Goobstation
 using Content.Shared.Standing;
@@ -63,7 +57,6 @@ public sealed class PullingSystem : EntitySystem
 {
     [Dependency] private readonly IGameTiming _timing = default!;
     [Dependency] private readonly ISharedAdminLogManager _adminLogger = default!;
-    [Dependency] private readonly INetManager _net = default!;
     [Dependency] private readonly ActionBlockerSystem _blocker = default!;
     [Dependency] private readonly AlertsSystem _alertsSystem = default!;
     [Dependency] private readonly SharedGravitySystem _gravity = default!;
@@ -131,7 +124,7 @@ public sealed class PullingSystem : EntitySystem
             && TryComp<PullableComponent>(ent.Comp.Pulling, out var comp)
             && ent.Comp.Pulling != null)
         {
-            if(_netManager.IsServer)
+            if (_netManager.IsServer)
                 StopPulling(ent.Comp.Pulling.Value, comp);
         }
     }
@@ -156,7 +149,7 @@ public sealed class PullingSystem : EntitySystem
 
     public override void Update(float frameTime)
     {
-        if (_net.IsClient) // Client cannot predict this
+        if (_netManager.IsClient) // Client cannot predict this
             return;
 
         var query = EntityQueryEnumerator<PullerComponent, PhysicsComponent, TransformComponent>();
@@ -185,38 +178,44 @@ public sealed class PullingSystem : EntitySystem
             if (pullerComp.PushingTowards is null)
                 continue;
 
+            EntityCoordinates? pushCoordinates = null;
             // If pushing but the target position is invalid, or the push action has expired or finished, stop pushing
-            if (pullerComp.NextPushStop < _timing.CurTime
-                || !(pullerComp.PushingTowards.Value.ToMap(EntityManager, _xformSys) is var pushCoordinates)
-                || pushCoordinates.MapId != pulledXForm.MapID)
+            if (pullerComp.NextPushStop < _timing.CurTime)
             {
+                if (_xformSys.TryGetMapOrGridCoordinates(puller, out pushCoordinates, pulledXForm))
+                {
+                    if(_xformSys.GetMapId(pushCoordinates.Value) == pulledXForm.MapID)
+                    {
+                        continue;
+                    }
+                }
                 pullerComp.PushingTowards = null;
                 pullerComp.NextPushTargetChange = TimeSpan.Zero;
                 continue;
             }
 
             // Actual force calculation. All the Vector2's below are in map coordinates.
-            var desiredDeltaPos = pushCoordinates.Position - Transform(pulled).Coordinates.ToMapPos(EntityManager, _xformSys);
-            if (desiredDeltaPos.LengthSquared() < 0.1f)
+            var desiredDeltaPos = pushCoordinates?.Position - Transform(pulled).Coordinates.ToMapPos(EntityManager, _xformSys);
+            if (desiredDeltaPos?.LengthSquared() < 0.1f)
             {
                 pullerComp.PushingTowards = null;
                 continue;
             }
 
-            var velocityAndDirectionAngle = new Angle(pulledPhysics.LinearVelocity) - new Angle(desiredDeltaPos);
+            var velocityAndDirectionAngle = new Angle(pulledPhysics.LinearVelocity) - new Angle(desiredDeltaPos!.Value);
             var currentRelativeSpeed = pulledPhysics.LinearVelocity.Length() * (float) Math.Cos(velocityAndDirectionAngle.Theta);
             var desiredAcceleration = MathF.Max(0f, pullerComp.MaxPushSpeed - currentRelativeSpeed);
 
             var desiredImpulse = pulledPhysics.Mass * desiredDeltaPos;
             var maxSourceImpulse = MathF.Min(pullerComp.PushAcceleration, desiredAcceleration) * pullerPhysics.Mass;
-            var actualImpulse = desiredImpulse.LengthSquared() > maxSourceImpulse * maxSourceImpulse ? desiredDeltaPos.Normalized() * maxSourceImpulse : desiredImpulse;
+            var actualImpulse = desiredImpulse?.LengthSquared() > maxSourceImpulse * maxSourceImpulse ? desiredDeltaPos.Value.Normalized() * maxSourceImpulse : desiredImpulse;
 
             // Ideally we'd want to apply forces instead of impulses, however...
             // We cannot use ApplyForce here because it will be cleared on the next physics substep which will render it ultimately useless
             // The alternative is to run this function on every physics substep, but that is way too expensive for such a minor system
-            _physics.ApplyLinearImpulse(pulled, actualImpulse);
+            _physics.ApplyLinearImpulse(pulled, actualImpulse!.Value);
             if (_gravity.IsWeightless(puller, pullerPhysics, pullerXForm))
-                _physics.ApplyLinearImpulse(puller, -actualImpulse);
+                _physics.ApplyLinearImpulse(puller, -actualImpulse.Value);
 
             pulledComp.BeingActivelyPushed = true;
         }

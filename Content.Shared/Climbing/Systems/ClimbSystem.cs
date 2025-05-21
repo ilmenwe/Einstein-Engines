@@ -55,6 +55,7 @@ public sealed partial class ClimbSystem : VirtualController
 
         _fixturesQuery = GetEntityQuery<FixturesComponent>();
         _xformQuery = GetEntityQuery<TransformComponent>();
+        _climbableQuery = GetEntityQuery<ClimbableComponent>();
 
         SubscribeLocalEvent<ClimbingComponent, UpdateCanMoveEvent>(OnMoveAttempt);
         SubscribeLocalEvent<ClimbingComponent, EntParentChangedMessage>(OnParentChange);

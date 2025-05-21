@@ -1,4 +1,5 @@
 using Content.Shared.Construction.EntitySystems;
+using Content.Shared.Maps;
 using Content.Shared.Whitelist;
 using Robust.Shared.Map;
 using Robust.Shared.Utility;
@@ -29,7 +30,7 @@ public sealed partial class EntityWhitelistCondition : IConstructionCondition
     [DataField("whitelist", required: true)]
     public EntityWhitelist Whitelist = new();
 
-    public bool Condition(EntityUid user, EntityCoordinates location, Direction direction)
+    public bool Condition(EntityUid user, EntityLookupSystem entityLookup, EntityCoordinates location, Direction direction, TurfSystem? turfSystem = null)
     {
         var whitelistSystem = IoCManager.Resolve<IEntityManager>().System<EntityWhitelistSystem>();
         return whitelistSystem.IsWhitelistPass(Whitelist, user);

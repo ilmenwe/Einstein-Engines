@@ -1,4 +1,4 @@
-﻿using Content.Shared.Maps;
+using Content.Shared.Maps;
 using JetBrains.Annotations;
 using Robust.Shared.Map;
 
@@ -11,18 +11,18 @@ namespace Content.Shared.Construction.Conditions
         [DataField("tileNotBlocked")]
         private TileNotBlocked _tileNotBlocked = new();
 
-        public bool Condition(EntityUid user, EntityCoordinates location, Direction direction)
+        public bool Condition(EntityUid user, EntityLookupSystem lookupSystem, EntityCoordinates location, Direction direction, TurfSystem? turfSystem = null)
         {
             var result = false;
 
-            foreach (var entity in location.GetEntitiesInTile(LookupFlags.Approximate | LookupFlags.Static))
+            foreach (var entity in lookupSystem.GetEntitiesInRange(location, 1.0f, LookupFlags.Approximate | LookupFlags.Static))
             {
                 if (IoCManager.Resolve<IEntityManager>().HasComponent<SharedCanBuildWindowOnTopComponent>(entity))
                     result = true;
             }
 
             if (!result)
-                result = _tileNotBlocked.Condition(user, location, direction);
+                result = _tileNotBlocked.Condition(user, lookupSystem, location, direction, IoCManager.Resolve<TurfSystem>());
 
             return result;
         }

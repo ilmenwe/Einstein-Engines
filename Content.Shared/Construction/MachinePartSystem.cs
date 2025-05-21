@@ -5,6 +5,7 @@ using Content.Shared.Examine;
 using Content.Shared.Lathe;
 using Content.Shared.Materials;
 using Content.Shared.Stacks;
+using Robust.Shared.GameObjects;
 using Robust.Shared.Prototypes;
 
 namespace Content.Shared.Construction
@@ -16,6 +17,7 @@ namespace Content.Shared.Construction
     {
         [Dependency] private readonly IPrototypeManager _prototype = default!;
         [Dependency] private readonly SharedLatheSystem _lathe = default!;
+        [Dependency] private readonly IComponentFactory _componentFactory = default!;
 
         public override void Initialize()
         {
@@ -101,9 +103,9 @@ namespace Content.Shared.Construction
 
             foreach (var (stackId, amount) in comp.MaterialIdRequirements)
             {
+                var physComp = _componentFactory.GetComponent<PhysicalCompositionComponent>();
                 var stackProto = _prototype.Index<StackPrototype>(stackId);
-                if (_prototype.TryIndex(stackProto.Spawn, out var defaultProto) && 
-                    defaultProto.TryGetComponent<PhysicalCompositionComponent>(out var physComp))
+                if (_prototype.TryIndex(stackProto.Spawn, out var defaultProto) && physComp != null)
                 {
                     foreach (var (mat, matAmount) in physComp.MaterialComposition)
                     {
@@ -130,7 +132,7 @@ namespace Content.Shared.Construction
             {
                 var amount = info.Amount;
                 var defaultProtoId = info.DefaultPrototype;
-
+                var physicalComponent = CompOrNull<PhysicalCompositionComponent>(entity);
                 if (_lathe.TryGetRecipesFromEntity(defaultProtoId, out var recipes))
                 {
                     var partRecipe = recipes[0];
@@ -144,9 +146,9 @@ namespace Content.Shared.Construction
                     }
                 }
                 else if (_prototype.TryIndex(defaultProtoId, out var defaultProto) &&
-                         defaultProto.TryGetComponent<PhysicalCompositionComponent>(out var physComp))
+                         physicalComponent != null)
                 {
-                    foreach (var (mat, matAmount) in physComp.MaterialComposition)
+                    foreach (var (mat, matAmount) in physicalComponent.MaterialComposition)
                     {
                         materials.TryAdd(mat, 0);
                         materials[mat] += matAmount * amount * coefficient;

@@ -15,6 +15,9 @@ using Content.Server.Atmos.EntitySystems;
 using Content.Shared.Throwing;
 using Content.Server.Chemistry.Containers.EntitySystems;
 using Content.Server.Fluids.EntitySystems;
+using Content.Shared.Chemistry.EntitySystems;
+using Content.Shared.Chemistry.Components.SolutionManager;
+using Content.Shared.Item;
 
 namespace Content.Server.Abilities.Psionics;
 
@@ -37,9 +40,10 @@ public sealed partial class AnomalyPowerSystem : EntitySystem
     [Dependency] private readonly ExplosionSystem _boom = default!;
     [Dependency] private readonly AtmosphereSystem _atmosphere = default!;
     [Dependency] private readonly ThrowingSystem _throwing = default!;
-    [Dependency] private readonly SolutionContainerSystem _solutionContainer = default!;
+    [Dependency] private readonly SharedSolutionContainerSystem _solutionContainer = default!;
     [Dependency] private readonly PuddleSystem _puddle = default!;
     [Dependency] private readonly FlammableSystem _flammable = default!;
+
 
     public override void Initialize()
     {

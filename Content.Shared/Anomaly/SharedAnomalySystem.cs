@@ -36,7 +36,7 @@ public abstract class SharedAnomalySystem : EntitySystem
     [Dependency] private readonly SharedPhysicsSystem _physics = default!;
     [Dependency] protected readonly SharedPopupSystem Popup = default!;
     [Dependency] private readonly IPrototypeManager _prototype = default!;
-    [Dependency] private readonly IRobustRandom _random = default!;
+    [Dependency] protected readonly SharedMapSystem MapSystem = default!;
 
     public override void Initialize()
     {
@@ -114,7 +114,7 @@ public abstract class SharedAnomalySystem : EntitySystem
             Audio.PlayPvs(component.PulseSound, uid);
 
         var pulse = EnsureComp<AnomalyPulsingComponent>(uid);
-        pulse.EndTime  = Timing.CurTime + pulse.PulseDuration;
+        pulse.EndTime = Timing.CurTime + pulse.PulseDuration;
         Appearance.SetData(uid, AnomalyVisuals.IsPulsing, true);
 
         var powerMod = 1f;
@@ -378,33 +378,33 @@ public abstract class SharedAnomalySystem : EntitySystem
         var amount = (int) MathF.Round(MathHelper.Lerp(settings.MinAmount + minAmountOffset, settings.MaxAmount + maxAmountOffset, severity * stability * powerModifier) + 0.5f);
 
         var localpos = xform.Coordinates.Position;
-        var tilerefs = grid.GetLocalTilesIntersecting(
-            new Box2(localpos + new Vector2(-settings.MaxRange, -settings.MaxRange), localpos + new Vector2(settings.MaxRange, settings.MaxRange))).ToList();
+        var tileRefs = MapSystem.GetLocalTilesIntersecting(uid, grid, new Box2(localpos + new Vector2(-settings.MaxRange, -settings.MaxRange), localpos + new Vector2(settings.MaxRange, settings.MaxRange))).ToList();
 
-        if (tilerefs.Count == 0)
+        if (tileRefs.Count == 0)
             return null;
 
         var physQuery = GetEntityQuery<PhysicsComponent>();
         var resultList = new List<TileRef>();
         while (resultList.Count < amount)
         {
-            if (tilerefs.Count == 0)
+            if (tileRefs.Count == 0)
                 break;
 
-            var tileref = _random.Pick(tilerefs);
+            var tileref = Random.Pick(tileRefs);
             var distance = MathF.Sqrt(MathF.Pow(tileref.X - xform.LocalPosition.X, 2) + MathF.Pow(tileref.Y - xform.LocalPosition.Y, 2));
 
             //cut outer & inner circle
             if (distance > settings.MaxRange || distance < settings.MinRange)
             {
-                tilerefs.Remove(tileref);
+                tileRefs.Remove(tileref);
                 continue;
             }
 
             if (!settings.CanSpawnOnEntities)
             {
                 var valid = true;
-                foreach (var ent in grid.GetAnchoredEntities(tileref.GridIndices))
+
+                foreach (var ent in MapSystem.GetAnchoredEntities(uid, grid, tileref.GridIndices))
                 {
                     if (!physQuery.TryGetComponent(ent, out var body))
                         continue;
@@ -419,7 +419,7 @@ public abstract class SharedAnomalySystem : EntitySystem
                 }
                 if (!valid)
                 {
-                    tilerefs.Remove(tileref);
+                    tileRefs.Remove(tileref);
                     continue;
                 }
             }

@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using Content.Shared.Actions;
 using Content.Shared.Damage;
 using Content.Shared.Examine;
@@ -168,7 +168,7 @@ public sealed partial class BlockingSystem : EntitySystem
             }
 
             // Don't allow someone to block if they're not holding the shield
-            if(!_handsSystem.IsHolding(user, item, out _))
+            if (!_handsSystem.IsHolding(user, item, out _))
             {
                 CantBlockError(user);
                 return false;
@@ -202,7 +202,7 @@ public sealed partial class BlockingSystem : EntitySystem
             if (_gameTiming.IsFirstTimePredicted)
             {
                 _popupSystem.PopupEntity(msgOther, user, Filter.PvsExcept(user), true);
-                if(_gameTiming.InPrediction)
+                if (_gameTiming.InPrediction)
                     _popupSystem.PopupEntity(msgUser, user, user);
             }
         }
@@ -276,7 +276,7 @@ public sealed partial class BlockingSystem : EntitySystem
             if (_gameTiming.IsFirstTimePredicted)
             {
                 _popupSystem.PopupEntity(msgOther, user, Filter.PvsExcept(user), true);
-                if(_gameTiming.InPrediction)
+                if (_gameTiming.InPrediction)
                     _popupSystem.PopupEntity(msgUser, user, user);
             }
         }
@@ -330,7 +330,7 @@ public sealed partial class BlockingSystem : EntitySystem
 
         var msg = new FormattedMessage();
 
-        msg.AddMarkup(Loc.GetString("blocking-fraction", ("value", MathF.Round(fraction * 100, 1))));
+        msg.AddMarkupOrThrow(Loc.GetString("blocking-fraction", ("value", MathF.Round(fraction * 100, 1))));
 
         AppendCoefficients(modifier, msg);
 
@@ -346,7 +346,7 @@ public sealed partial class BlockingSystem : EntitySystem
         foreach (var coefficient in modifiers.Coefficients)
         {
             msg.PushNewline();
-            msg.AddMarkup(Robust.Shared.Localization.Loc.GetString("blocking-coefficient-value",
+            msg.AddMarkupOrThrow(Robust.Shared.Localization.Loc.GetString("blocking-coefficient-value",
                 ("type", coefficient.Key),
                 ("value", MathF.Round(coefficient.Value * 100, 1))
             ));
@@ -355,7 +355,7 @@ public sealed partial class BlockingSystem : EntitySystem
         foreach (var flat in modifiers.FlatReduction)
         {
             msg.PushNewline();
-            msg.AddMarkup(Robust.Shared.Localization.Loc.GetString("blocking-reduction-value",
+            msg.AddMarkupOrThrow(Robust.Shared.Localization.Loc.GetString("blocking-reduction-value",
                 ("type", flat.Key),
                 ("value", flat.Value)
             ));

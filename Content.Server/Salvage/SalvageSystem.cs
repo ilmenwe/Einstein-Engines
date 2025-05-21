@@ -40,7 +40,6 @@ namespace Content.Server.Salvage
     {
         [Dependency] private readonly IChatManager _chat = default!;
         [Dependency] private readonly IConfigurationManager _configurationManager = default!;
-        [Dependency] private readonly IEntityManager _entManager = default!;
         [Dependency] private readonly IGameTiming _timing = default!;
         [Dependency] private readonly ILogManager _logManager = default!;
         [Dependency] private readonly IMapManager _mapManager = default!;

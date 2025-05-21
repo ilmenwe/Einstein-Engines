@@ -51,7 +51,6 @@ public sealed partial class CargoSystem : SharedCargoSystem
     [Dependency] private readonly IEntityManager _entityManager = default!;
     [Dependency] private readonly IComponentFactory _factory = default!;
     [Dependency] private readonly MapLoaderSystem _mapLoader = default!;
-    [Dependency] private readonly SharedIdCardSystem _idCardSystem = default!;
 
     private EntityQuery<TransformComponent> _xformQuery;
     private EntityQuery<CargoSellBlacklistComponent> _blacklistQuery;

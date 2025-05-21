@@ -46,13 +46,13 @@ public sealed class SpaceHeaterBoundUserInterface : BoundUserInterface
     private void OnModeChanged(OptionButton.ItemSelectedEventArgs args)
     {
         _window?.ModeSelector.SelectId(args.Id);
-        SendMessage(new SpaceHeaterChangeModeMessage((SpaceHeaterMode)args.Id));
+        SendMessage(new SpaceHeaterChangeModeMessage((SpaceHeaterMode) args.Id));
     }
 
     private void OnPowerLevelChange(RadioOptionItemSelectedEventArgs<int> args)
     {
         _window?.PowerLevelSelector.Select(args.Id);
-        SendMessage(new SpaceHeaterChangePowerLevelMessage((SpaceHeaterPowerLevel)args.Id));
+        SendMessage(new SpaceHeaterChangePowerLevelMessage((SpaceHeaterPowerLevel) args.Id));
     }
 
     /// <summary>
@@ -66,8 +66,8 @@ public sealed class SpaceHeaterBoundUserInterface : BoundUserInterface
             return;
 
         _window.SetActive(cast.Enabled);
-        _window.ModeSelector.SelectId((int)cast.Mode);
-        _window.PowerLevelSelector.Select((int)cast.PowerLevel);
+        _window.ModeSelector.SelectId((int) cast.Mode);
+        _window.PowerLevelSelector.Select((int) cast.PowerLevel);
 
         _window.MinTemp = cast.MinTemperature;
         _window.MaxTemp = cast.MaxTemperature;
@@ -79,6 +79,5 @@ public sealed class SpaceHeaterBoundUserInterface : BoundUserInterface
         base.Dispose(disposing);
         if (!disposing)
             return;
-        _window?.Dispose();
     }
 }

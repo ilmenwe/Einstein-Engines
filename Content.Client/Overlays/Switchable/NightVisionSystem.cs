@@ -11,7 +11,6 @@ public sealed class NightVisionSystem : EquipmentHudSystem<NightVisionComponent>
 {
     [Dependency] private readonly IOverlayManager _overlayMan = default!;
     [Dependency] private readonly ILightManager _lightManager = default!;
-    [Dependency] private readonly IGameTiming _timing = default!;
 
     private BaseSwitchableOverlay<NightVisionComponent> _overlay = default!;
 

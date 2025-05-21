@@ -184,14 +184,13 @@ public abstract class ClothingSystem : EntitySystem
 
     private void OnPickedUp(Entity<ClothingComponent> ent, ref GettingPickedUpAttemptEvent args)
     {
-        // If this clothing is equipped by the performer of this action, and the clothing has an unequip delay, stop the attempt
-        if (ent.Comp.UnequipDelay <= TimeSpan.Zero
-            || !_invSystem.TryGetContainingSlot(ent.Owner, out var slot)
-            || !_containerSys.TryGetContainingContainer(ent, out var container)
-            || container.Owner != args.User)
-            return;
 
-        args.Cancel();
+        // If this clothing is equipped by the performer of this action, and the clothing has an unequip delay, stop the attempt
+        if (ent.Comp.UnequipDelay > TimeSpan.Zero
+            && _invSystem.TryGetContainingSlot(ent.Owner, out var slot)
+            && _containerSys.TryGetContainingContainer(ent.Owner, out var container)
+            && container.Owner == args.User)
+            args.Cancel();
     }
 
     // Yes, this is exclusive C# just so that high heels selected from loadouts still hide the feet layers

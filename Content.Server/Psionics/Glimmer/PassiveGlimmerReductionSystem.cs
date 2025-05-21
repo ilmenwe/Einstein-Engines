@@ -11,7 +11,6 @@ namespace Content.Server.Psionics.Glimmer;
 public sealed class PassiveGlimmerReductionSystem : EntitySystem
 {
     [Dependency] private readonly GlimmerSystem _glimmerSystem = default!;
-    [Dependency] private readonly IGameTiming _timing = default!;
     [Dependency] private readonly IConfigurationManager _cfg = default!;
 
     /// List of glimmer values spaced by minute.

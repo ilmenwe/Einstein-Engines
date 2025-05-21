@@ -1,4 +1,4 @@
-﻿using Content.Shared.Body.Components;
+using Content.Shared.Body.Components;
 using Content.Shared.Body.Systems;
 using Robust.Shared.Containers;
 using Robust.Shared.GameStates;
@@ -187,9 +187,11 @@ public sealed partial class BodyPartComponent : Component, ISurgeryToolComponent
     [DataField, AutoNetworkedField]
     public Dictionary<string, OrganSlot> Organs = new();
 
+
     /// <summary>
     /// These are only for VV/Debug do not use these for gameplay/systems
     /// </summary>
+#pragma warning disable CS0618
     [ViewVariables]
     private List<ContainerSlot> BodyPartSlotsVV
     {
@@ -200,7 +202,7 @@ public sealed partial class BodyPartComponent : Component, ISurgeryToolComponent
 
             foreach (var slotId in Children.Keys)
             {
-                temp.Add((ContainerSlot) containerSystem.GetContainer(Owner, SharedBodySystem.PartSlotContainerIdPrefix+slotId));
+                temp.Add((ContainerSlot) containerSystem.GetContainer(Owner, SharedBodySystem.PartSlotContainerIdPrefix + slotId));
             }
 
             return temp;
@@ -217,13 +219,14 @@ public sealed partial class BodyPartComponent : Component, ISurgeryToolComponent
 
             foreach (var slotId in Organs.Keys)
             {
-                temp.Add((ContainerSlot) containerSystem.GetContainer(Owner, SharedBodySystem.OrganSlotContainerIdPrefix+slotId));
+                temp.Add((ContainerSlot) containerSystem.GetContainer(Owner, SharedBodySystem.OrganSlotContainerIdPrefix + slotId));
             }
 
             return temp;
         }
     }
 }
+#pragma warning restore CS0618
 
 /// <summary>
 /// Contains metadata about a body part in relation to its slot.
